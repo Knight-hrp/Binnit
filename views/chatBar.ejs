@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Bar with Message Template</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+            margin: 0;
+        }
+        .chat-container {
+            width: 400px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .chat-messages {
+    display: flex;
+    flex-direction: column; /* This makes new messages appear at the bottom */
+    height: 250px;
+    overflow-y: auto;
+    border-bottom: none; /* Removes extra line */
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+#imageContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px; /* Ensures spacing between images */
+}
+
+#imageContainer img {
+    display: block;
+    width: 200px;
+    margin: 5px 0; /* Ensures no extra lines around images */
+    border-radius: 8px;
+}
+        .chat-input {
+            gap: 10px;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .chat-input button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .chat-input button:hover {
+            background: #0056b3;
+        }
+        .template-btns {
+            margin-bottom: 10px;
+        }
+        .template-btns button {
+            padding: 5px 10px;
+            margin: 3px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            background: #ddd;
+        }
+        .template-btns button:hover {
+            background: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-messages" id="chatMessages"></div>
+    <div id="imageContainer"></div>
+    
+    <div class="template-btns">
+        <button >Upload</button>
+    </div>
+
+    <div class="chat-input">
+        <input type="text" id="messageInput" placeholder="Type a message...">
+        <button id = "sendbtn" type="submit">Send</button>
+        <br>
+        <% if(locals.Community) { %><form method ="post" action="/community/<%=Community%>/postFile" id="uploadForm" enctype="multipart/form-data">
+            <input type="file" name = "image" id="fileInput">
+            <input type="text" id="caption" placeholder="Type a caption...">
+            <button id="submitBtn">Send Image</button>
+        </form>
+        <%}%>
+    </div>
+</div>
+<% if(locals.Community) { %>
+<script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const messageInput = document.getElementById("messageInput");
+        const sendbtn = document.getElementById("sendbtn");
+        const chatBox = document.getElementById("chatMessages");
+
+        const roomName = "<%=Community%>";
+
+        socket.emit('join-room', roomName);
+
+        socket.on('message', (message) => {
+            console.log("Received:", message);
+            let newMessage = document.createElement("div");
+            newMessage.textContent = message;
+            chatBox.appendChild(newMessage);
+            chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll
+            
+            fetch("http://localhost:8000/community/<%=Community%>/postText", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message: message }) 
+            })
+            .then(response => response.text()) 
+            .then(data => console.log("Server Response:", data))
+            .catch(error => console.error("Error:", error));
+
+        });
+
+        sendbtn.addEventListener('click', () => {
+        const message = messageInput.value.trim();
+        if (message) {
+            socket.emit('user-message', { room: roomName, message });
+            messageInput.value = ""; 
+        }
+        });
+
+        messageInput.addEventListener("keypress", (event) => {
+        if (event.key === "Enter") {
+            sendbtn.click();
+        }
+    });
+
+    document.getElementById("uploadForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const formData = new FormData(this);
+
+    fetch("/community/<%=Community%>/postFile", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === "successfully!") {
+            console.log("Image uploaded successfully!");
+            document.getElementById("fileInput").value = "";
+            document.getElementById("caption").value = "";
+        }
+    })
+    .catch(error => console.error("Upload error:", error));
+});
+
+    socket.on("newImage", (filePath) => {
+            const imgContainer = document.createElement("div");
+            chatBox.style.marginBottom = "10px";
+
+            const img = document.createElement("img");
+            img.src = filePath;
+            img.style.width = "200px";
+            img.style.display = "block";
+
+            chatBox.appendChild(img);
+            document.getElementById("imageContainer").prepend(imgContainer);
+        }); 
+
+    </script>
+<%}%>
+</body>
+</html>
+

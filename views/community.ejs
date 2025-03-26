@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <title>Community</title>
+</head>
+<body>
+    <h1>Community Forum</h1>
+    <button id = "addCommunity">
+        <i class="fa-solid fa-plus"></i>
+    </button>
+    <br>
+    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px;">
+        <% if (locals.AllCom) { %>
+            <% AllCom.forEach((Com,index) => { %>
+                <div style="background: rgb(100, 99, 99); padding: 15px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); text-align: center;">
+                    <img src="<%= Com.imageName %>" alt="Blog Image" style="width: 100%; border-radius: 8px;">
+    
+                    <h3 style="margin-top: 10px; color: white;"><%= Com.communityName %></h3>
+    
+                    <p style="color: white; font-size: 14px;"><%= Com.aboutCommunity %></p>
+    
+                    <% 
+                        let isJoined = false;
+                        if (locals.joinedCommunities) {
+                            joinedCommunities.forEach((community) => {
+                                if (community.communityID.toString() === Com._id.toString()) {
+                                    isJoined = true;
+                                }
+                            });
+                        }
+                    %>
+    
+                    <% if (isJoined) { %>
+                        <p href="/community/<%= Com.communityName %>" style="display: inline-block; background: blue; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; margin-top: 10px;">
+                            Explore
+                        </p>
+                    <% } else { %>
+                        <a href="/community/join/<%= Com.communityName %>" style="display: inline-block; background: blue; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; margin-top: 10px;">
+                            Join
+                        </a>
+                    <% } %>
+                </div>
+            <% }); %>
+        <% } %>
+    </div>
+    
+    <script>
+        const addCommunity = document.getElementById("addCommunity");
+        addCommunity.addEventListener("click",()=>{
+            window.location.href = "/community/addCommunity";
+        })
+    </script>
+</body>
+</html>
