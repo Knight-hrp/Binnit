@@ -1,0 +1,246 @@
+:root {
+    /* 🎨 Primary Colors */
+    --deep-purple: #6A0DAD;
+    --royal-purple: #7D1EBE;
+    --electric-purple: #BF00FF;
+
+    /* ⚫ Dark Theme Backgrounds */
+    --dark-charcoal: #1A1A1D;
+    /* Main background */
+    --deep-slate: #232323;
+    /* Slightly lighter than dark-charcoal */
+    --soft-black: #0D0D0D;
+    /* Extra dark for contrast */
+
+    /* 🩶 Gray Accents */
+    --dark-gray: #2C2C2F;
+    /* Dark gray that blends with dark-charcoal */
+    --light-gray: #3A3A3D;
+    /* Light gray for subtle contrast */
+
+    /* 🔹 Accent Colors */
+    --neon-pink: #FF007F;
+    --cyan-blue: #00E5FF;
+    --glowing-magenta: #D400FF;
+
+    /* 📝 Text Colors */
+    --bright-white: #F8F8F8;
+    --cool-gray: #B0B0B0;
+    --light-lavender: #D3A8FF;
+}
+
+body {
+        background-image: radial-gradient(circle, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url('../svg_icons/login_background.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center,
+            transparent,
+            rgba(0,0,0, 0.2));
+    pointer-events: none;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #1e1e1e;
+}
+
+.container {
+    display: flex;
+    width: 820px;
+    height: 780px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    border-radius: 10px;
+    z-index: 3;
+}
+
+.left-section {
+    width: 50%;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+#bgImage svg {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    width: 80%;
+    max-width: 400px;
+}
+.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 18px;
+}
+
+.right-section {
+    width: 50%;
+    background: var(--dark-charcoal);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+}
+
+.right-section h2{
+    position: relative;
+    top: -4%;
+    left: -38%;
+    
+}
+.right-section label{
+    align-self: flex-start;
+    font-weight: 590;
+    font-size: 14.8px;
+    
+}
+
+h2 {
+    font-size: 30px;
+    margin-bottom: 20px;
+
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 0.5px solid #ccc;
+    border-radius: 9px;
+    color: #0D0D0D;
+    outline: none;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 10px;
+    background: var(--deep-purple);
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    border-radius: 9px;
+    font-weight: 580;
+    transition: opacity 200ms ease;
+}
+
+.login-btn:hover{
+    opacity: 0.8;
+}
+
+.login-btn:active{
+    opacity: 0.6;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 15px 0;
+}
+
+.divider hr {
+    flex-grow: 1;
+    border: none;
+    border-top: 1px solid #ccc;
+}
+
+.divider span {
+    margin: 0 10px;
+    color: #777;
+}
+
+.social-btn {
+    font-weight: 580;
+    width: 100%;
+    padding: 10px;
+    background: var(--deep-purple);
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    border-radius: 9px;
+    
+    transition: opacity 200ms ease;
+}
+
+.social-btn:hover {
+    opacity: 0.8;
+}
+
+.social-btn:active {
+    opacity: 0.6;
+}
+
+.signup-text {
+    margin-top: 15px;
+    font-size: 14px;
+    margin-right: 0;
+}
+
+.signup-text a {
+    color: var(--glowing-magenta);
+    text-decoration: none;
+}
+
+.bottom-text {
+    font-size: 10px;
+    color: var(--cool-gray);
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 10px;
+ 
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        width: 90%;
+    }
+
+    .left-section {
+        width: 100%;
+        height: 200px;
+    }
+
+    .right-section {
+        width: 100%;
+        padding: 20px;
+    }
+}

@@ -1,0 +1,25 @@
+.binnit-sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.binnit-sidebar::-webkit-scrollbar-track {
+    background: var(--dark-charcoal);
+    border-radius: 4px;
+}
+
+.binnit-sidebar::-webkit-scrollbar-thumb {
+    background: var(--light-gray);
+    border-radius: 4px;
+}
+
+.binnit-sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--cool-gray);
+}
+
+.binnit-sidebar {
+    scrollbar-width: 2px;
+    scrollbar-color: var(--light-gray) var(--dark-charcoal);
+
+}
+
+
