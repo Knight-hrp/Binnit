@@ -168,18 +168,32 @@
     .catch(error => console.error("Upload error:", error));
 });
 
-    socket.on("newImage", (filePath) => {
-            const imgContainer = document.createElement("div");
-            chatBox.style.marginBottom = "10px";
+socket.on("newMedia", ({ filePath, extension }) => {
+    const mediaContainer = document.createElement("div");
+    chatBox.style.marginBottom = "10px";
 
-            const img = document.createElement("img");
-            img.src = filePath;
-            img.style.width = "200px";
-            img.style.display = "block";
+    if ([".jpg", ".jpeg", ".png", ".gif", ".webp"].includes(extension)) {
+        const img = document.createElement("img");
+        img.src = filePath;
+        img.style.width = "200px";
+        img.style.display = "block";
+        mediaContainer.appendChild(img);
+    } else if ([".mp4", ".webm", ".ogg"].includes(extension)) {
+        const video = document.createElement("video");
+        video.src = filePath;
+        video.controls = true;
+        video.style.width = "200px";
+        video.style.display = "block";
+        mediaContainer.appendChild(video);
+    } else {
+        const msg = document.createElement("p");
+        msg.textContent = "Unsupported file type: " + filePath;
+        mediaContainer.appendChild(msg);
+    }
 
-            chatBox.appendChild(img);
-            document.getElementById("imageContainer").prepend(imgContainer);
-        }); 
+    document.getElementById("imageContainer").prepend(mediaContainer);
+});
+
 
     </script>
 <%}%>
