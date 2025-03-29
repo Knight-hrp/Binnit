@@ -1,8 +1,13 @@
 const express = require('express');
 const multer = require('multer');
-const { createCommunity, getCommunity,joinCommunity,exploreCommunity } = require('../controllers/community');
+
+const { createCommunity, getCommunity,joinCommunity, exploreCommunity } = require('../controllers/community');
+
 const router = express.Router();
+
 const JOINCOMMUNITY = require('../models/joinCommunity');
+const POST = require('../models/post');
+const COMMUNITY = require('../models/community');
 const path = require('path');
 const {} = require('../socketHandler')
 
@@ -35,17 +40,25 @@ router.post("/addCommunity",upload.single("image"),(req,res)=>{
 
 router.get("/explore",exploreCommunity)
 
-router.get('/:community',(req,res)=>{
-    const community = req.params.community;
-    return res.render("chatBar",{Community: community});
+router.get('/:community',async (req,res)=>{
+    const community_id = await COMMUNITY.findOne({communityName: req.params.community});
+    const communityPost = await POST.find({community_id: community_id._id});
+    return res.render("chatBar",{Community: req.params.community,CommunityPost: communityPost});
 })
 
 router.post("/:community/postText",async (req,res)=>{
-    console.log(req.user);
+    const communityID = await COMMUNITY.findOne({communityName: req.params.community});
+    console.log(communityID);
+    const post = await POST.create({
+        postText: req.body.message,
+        community_id: communityID._id,
+        user_id: req.user._id
+    })
+
     return res.send("successful ");
 });
 
-router.post("/:community/postFile",upload.single("image"),(req,res)=>{
+router.post("/:community/postFile",upload.single("image"),async(req,res)=>{
     if(!req.file)
     {
         return res.status(400).send("No file uploaded");
@@ -54,6 +67,13 @@ router.post("/:community/postFile",upload.single("image"),(req,res)=>{
     const filePath = `/communityImage/${req.file.filename}`;
     const fileExtension = path.extname(req.file.originalname).toLowerCase();
     const room = req.params.community;
+    const communityID = await COMMUNITY.findOne({communityName: req.params.community});
+    const post = await POST.create({
+        path: filePath,
+        community_id: communityID._id,
+        user_id: req.user._id,
+        caption: req.body.caption,
+    });
     global.io.to(room).emit("newMedia", {
         filePath,
         extension: fileExtension
@@ -62,6 +82,8 @@ router.post("/:community/postFile",upload.single("image"),(req,res)=>{
 })
 
 router.get("/join/:community",joinCommunity)
+
+router.get("/:community")
 
     
 module.exports = router;

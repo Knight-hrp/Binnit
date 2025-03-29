@@ -30,6 +30,7 @@ const USER = require('./models/user');
 const PROFILEPICTURE = require('./models/userProfilePicture');
 const COMMUNITY = require('./models/community')
 const JOINCOMMUNITY = require('./models/joinCommunity');
+const POST = require('./models/post')
 
 const {connectToMongoDB} = require("./connect")
 

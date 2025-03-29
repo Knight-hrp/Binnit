@@ -23,6 +23,8 @@
     <link rel="stylesheet" href="homepage_Styles.css">
     <link rel="stylesheet" href="scrollbar.css">
     <script type="text/javascript" src="dropdown_menu.js" defer></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   </head>       
 
   <body>
@@ -75,9 +77,6 @@
                     <span>Home</span>
                 </a>
                 </div>
-
-
-
             </li>
 
             <li>
@@ -152,12 +151,66 @@
 
             </ul>
         </nav>
-    
     </div>
-
-
+    <div id="display-container" class="display-container">
+        <% posts.forEach(post => { %>
+        <div class="post-container">
+            <div class="post-header">
+                <div class="profile-info">
+                    <% userProfiles.forEach(userProfile => { %>
+                        <% if(userProfile.user_id.toString() === post.user_id.toString()) { %>
+                            <img src="<%= userProfile.picture_name %>" alt="Profile Picture" class="profile-pic">
+                        <% } %>
+                    <% }) %>
+                
+                    <% users.forEach(user => { %>
+                        <% if(user._id.toString() === post.user_id.toString()) { %>
+                            <div class="user-details">
+                                <span class="username"><%= user.name %></span>
+                            </div>
+                        <% } %>
+                    <% }) %>
+                </div>
+                <div class="header-buttons">
+                    <button class="join-btn">Join</button>
+                    <button class="menu-btn">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                    <div class="menu-dropdown">
+                        <ul>
+                            <li>Save Post</li>
+                            <li>Report</li>
+                            <li>Hide</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <% if(post.postText) {%>
+            <p class="post-text"><%=post.postText%></p>
+            <% } else {%>
+                <p class="post-text"><%=post.caption%></p>
+                <div class="post-content">
+                    <img src="<%=post.path%>" alt="Post Image" class="post-media">
+                </div>
+            <% } %>
     
-
-
+            <div class="post-footer">
+                <div class="footer-icons">
+                    <a href="/<%=post._id%>/upvote" class="icon-box">
+                        <i class="fas fa-arrow-up"></i>
+                        <span class="vote-count"><%=post.upVote%></span>
+                    </a>
+                    <button class="icon-box downvote">
+                        <i class="fas fa-arrow-down"></i>
+                    </button>
+                    <button class="icon-box comment-btn">
+                        <i class="fas fa-comment"></i>
+                        <span>Comments</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <% }) %>
+    </div>
   </body>
 </html>

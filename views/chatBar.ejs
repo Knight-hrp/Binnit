@@ -21,21 +21,21 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        .chat-messages {
+    .chat-messages {
     display: flex;
-    flex-direction: column; /* This makes new messages appear at the bottom */
+    flex-direction: column; 
     height: 250px;
     overflow-y: auto;
-    border-bottom: none; /* Removes extra line */
+    border-bottom: none; 
     padding-bottom: 10px;
     margin-bottom: 10px;
 }
 
 #imageContainer {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     align-items: flex-start;
-    gap: 5px; /* Ensures spacing between images */
+    gap: 5px; 
 }
 
 #imageContainer img {
@@ -83,8 +83,26 @@
 <body>
 
 <div class="chat-container">
-    <div class="chat-messages" id="chatMessages"></div>
-    <div id="imageContainer"></div>
+    <div class="chat-messages" id="chatMessages">
+        <% CommunityPost.forEach(post => { %>
+            <div class="message">
+                <%if(post.postText) {%>
+                    <%= post.postText %></p>
+                <%}%>
+                <% if (post.path) { %>
+                    <% let ext = post.path.split('.').pop().toLowerCase(); %>
+                    <% if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) { %>
+                        <img src="<%= post.path %>" alt="Posted Image" style="max-width: 200px; border-radius: 8px;">
+                    <% } else if (['mp4', 'webm', 'ogg'].includes(ext)) { %>
+                        <video src="<%= post.path %>" controls style="max-width: 200px; border-radius: 8px;"></video>
+                    <% } else { %>
+                        <p>Unsupported file type: <%= post.path %></p>
+                    <% } %>
+                <% } %>
+            </div>
+        <% }) %>
+    </div>
+    <div id="imageContainer" style="display: flex; flex-direction: column-reverse; align-items: flex-start; gap: 5px;"></div>
     
     <div class="template-btns">
         <button >Upload</button>
@@ -131,15 +149,14 @@
             .then(response => response.text()) 
             .then(data => console.log("Server Response:", data))
             .catch(error => console.error("Error:", error));
-
         });
 
         sendbtn.addEventListener('click', () => {
-        const message = messageInput.value.trim();
-        if (message) {
-            socket.emit('user-message', { room: roomName, message });
-            messageInput.value = ""; 
-        }
+            const message = messageInput.value.trim();
+            if (message) {
+                socket.emit('user-message', { room: roomName, message });
+                messageInput.value = ""; 
+            }
         });
 
         messageInput.addEventListener("keypress", (event) => {
@@ -149,7 +166,7 @@
     });
 
     document.getElementById("uploadForm").addEventListener("submit", function(event) {
-    event.preventDefault(); // Prevent default form submission
+    event.preventDefault();
 
     const formData = new FormData(this);
 
@@ -191,7 +208,8 @@ socket.on("newMedia", ({ filePath, extension }) => {
         mediaContainer.appendChild(msg);
     }
 
-    document.getElementById("imageContainer").prepend(mediaContainer);
+    chatBox.appendChild(mediaContainer);
+    chatBox.scrollTop = chatBox.scrollHeight;
 });
 
 
