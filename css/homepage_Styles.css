@@ -471,3 +471,18 @@ hr {
 .downvote.active {
     color: #7193ff;
 }
+
+
+@media (max-width: 600px) { 
+    .post-media {
+        max-width: 80%;
+        height: auto;
+    }
+}
+
+/* Use Aspect Ratio for Detection */
+.post-media.portrait {
+    width: auto;
+    height: 500px;
+    max-width: 100%;
+}

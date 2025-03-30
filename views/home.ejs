@@ -188,18 +188,34 @@
             <% if(post.postText) {%>
             <p class="post-text"><%=post.postText%></p>
             <% } else {%>
-                <p class="post-text"><%=post.caption%></p>
+                <p class="post-text"><%= post.caption %></p>
                 <div class="post-content">
-                    <img src="<%=post.path%>" alt="Post Image" class="post-media">
-                </div>
+                <% if (post.path.endsWith('.jpg') || post.path.endsWith('.jpeg') || post.path.endsWith('.png') || post.path.endsWith('.gif')) { %>
+                    <img src="<%= post.path %>" alt="Post Image" class="post-media">
+                <% } else if (post.path.endsWith('.mp4') || post.path.endsWith('.webm') || post.path.endsWith('.ogg')) { %>
+                    <video controls class="post-media">
+                        <source src="<%= post.path %>" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                <% } else if (post.path.endsWith('.mp3') || post.path.endsWith('.wav') || post.path.endsWith('.ogg')) { %>
+                    <audio controls class="post-media">
+                        <source src="<%= post.path %>" type="audio/mpeg">
+                        Your browser does not support the audio tag.
+                    </audio>
+                <% } else if (post.path.endsWith('.pdf')) { %>
+                    <embed src="<%= post.path %>" type="application/pdf" class="post-media" width="100%" height="500px">
+                <% } else { %>
+                    <a href="<%= post.path %>" download class="post-media">Download File</a>
+                <% } %>
+    </div>
             <% } %>
     
             <div class="post-footer">
                 <div class="footer-icons">
-                    <a href="/<%=post._id%>/upvote" class="icon-box">
+                    <button onclick="window.location.href='/upvote/<%=post._id%>'" class="icon-box">
                         <i class="fas fa-arrow-up"></i>
                         <span class="vote-count"><%=post.upVote%></span>
-                    </a>
+                    </button>
                     <button class="icon-box downvote">
                         <i class="fas fa-arrow-down"></i>
                     </button>
@@ -212,5 +228,18 @@
         </div>
         <% }) %>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".post-media").forEach(media => {
+                media.onload = function () {
+                    if (this.naturalHeight > this.naturalWidth) {
+                        this.classList.add("portrait");
+                    }
+                };
+            });
+        });
+    </script>
+        
   </body>
 </html>

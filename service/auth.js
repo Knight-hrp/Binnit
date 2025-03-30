@@ -20,7 +20,7 @@ function getUser(token)
     }
     catch(error)
     {
-        return null
+        return null;
     }
 }
 

@@ -1,6 +1,7 @@
 const USER = require("../models/user");
 const PROFILEPICTURE = require("../models/userProfilePicture")
 const POST = require("../models/post");
+const UPVOTE = require("../models/upVote");
 
 async function renderHome(req,res)
 {
@@ -10,4 +11,19 @@ async function renderHome(req,res)
     res.render("home",{posts: post,users:user,userProfiles: userProfile});
 }
 
-module.exports = {renderHome};
+async function setUpVote(post_id, user_id)
+{
+    const upVote = await UPVOTE.find({post_id: post_id, user_id: user_id});
+    if(upVote.length === 0)
+    {
+        await UPVOTE.create({post_id: post_id, user_id: user_id});
+        await POST.findByIdAndUpdate( post_id, {$inc: {upVote: 1}});
+    }
+    else
+    {
+        await UPVOTE.deleteOne({_id: upVote[0]._id});
+        await POST.findByIdAndUpdate(post_id, {$inc: {upVote: -1}});
+    }
+}
+
+module.exports = {renderHome, setUpVote};

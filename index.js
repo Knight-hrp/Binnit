@@ -14,6 +14,7 @@ const staticRoute = require("./routes/staticRouter");
 const userRoute = require("./routes/user");
 const userProfileRoute = require("./routes/userProfile");
 const communityRoute = require('./routes/community');
+const upVoteRoute = require('./routes/upVote')
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "css")));
@@ -30,7 +31,9 @@ const USER = require('./models/user');
 const PROFILEPICTURE = require('./models/userProfilePicture');
 const COMMUNITY = require('./models/community')
 const JOINCOMMUNITY = require('./models/joinCommunity');
-const POST = require('./models/post')
+const POST = require('./models/post');
+const UPVOTE = require('./models/upVote');
+const COMMENT = require('./models/comment')
 
 const {connectToMongoDB} = require("./connect")
 
@@ -45,6 +48,7 @@ app.use("/",staticRoute);
 app.use("/user",userRoute);
 app.use("/profile", restrictToNonLoginUser, userProfileRoute);
 app.use("/community",restrictToNonLoginUser, communityRoute);
+app.use("/upVote", restrictToNonLoginUser, upVoteRoute)
 
 server.listen(8000,()=>{
     console.log(`WEB Application run on port: ${port} `);
