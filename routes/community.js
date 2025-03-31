@@ -68,38 +68,65 @@ router.get('/:community',async (req,res)=>{
 })
 
 router.post("/:community/postText",async (req,res)=>{
-    const communityID = await COMMUNITY.findOne({communityName: req.params.community});
-    const post = await POST.create({
-        postText: req.body.message,
-        community_id: communityID._id,
-        user_id: req.user._id
-    })
+    try {
+        const communityID = await COMMUNITY.findOne({communityName: req.params.community});
+        if (!communityID) {
+            return res.status(404).send("Community not found");
+        }
 
-    return res.send("successful ");
+        const post = await POST.create({
+            title: req.body.title,
+            postText: req.body.postText,
+            community_id: communityID._id,
+            user_id: req.user._id,
+            upVote: 0
+        });
+
+        return res.redirect(`/community/${req.params.community}`);
+    } catch (error) {
+        console.error("Error creating post:", error);
+        res.status(500).send("Error creating post: " + error.message);
+    }
 });
 
 router.post("/:community/postFile",upload.single("image"),async(req,res)=>{
-    if(!req.file)
-    {
-        return res.status(400).send("No file uploaded");
+    try {
+        if(!req.file) {
+            return res.status(400).send("No file uploaded");
+        }
+        console.log("File received:", req.file.filename);
+        console.log("Caption received:", req.body.caption);
+        
+        const filePath = `/communityImage/${req.file.filename}`;
+        const fileExtension = path.extname(req.file.originalname).toLowerCase();
+        const room = req.params.community;
+        const communityID = await COMMUNITY.findOne({communityName: req.params.community});
+        
+        if (!communityID) {
+            return res.status(404).send("Community not found");
+        }
+
+        const post = await POST.create({
+            title: req.body.caption,
+            path: filePath,
+            community_id: communityID._id,
+            user_id: req.user._id,
+            caption: req.body.content,
+        });
+
+        // Emit the new media event for real-time updates
+        global.io.to(room).emit("newMedia", {
+            filePath,
+            extension: fileExtension
+        }); 
+
+        // Redirect back to the community page
+        return res.redirect(`/community/${req.params.community}`);
+    } catch (error) {
+        console.error("Error uploading file:", error);
+        res.status(500).send("Error uploading file: " + error.message);
     }
-    console.log("Image received:", req.file.filename);
-    const filePath = `/communityImage/${req.file.filename}`;
-    const fileExtension = path.extname(req.file.originalname).toLowerCase();
-    const room = req.params.community;
-    const communityID = await COMMUNITY.findOne({communityName: req.params.community});
-    const post = await POST.create({
-        path: filePath,
-        community_id: communityID._id,
-        user_id: req.user._id,
-        caption: req.body.caption,
-    });
-    global.io.to(room).emit("newMedia", {
-        filePath,
-        extension: fileExtension
-    }); 
-    res.json({ message: "successfully!", filename: filePath });
-})
+});
 
 
 router.get("/post/create/:community",renderCreatePost);

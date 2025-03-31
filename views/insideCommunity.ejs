@@ -82,7 +82,7 @@
 
             <li>
                 <div class="list-style">
-                    <a href="/user/profile">
+                    <a href="/profile">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M234-276q51-39 114-59.5T480-356q71 0 134 20.5T728-276q35-41 53.5-93T800-480q0-133-93.5-226.5T480-800 253.5-706.5 160-480q0 59 19 111t53 93Zm246-164q-70 0-120-50t-50-120q0-70 50-120t120-50q70 0 120 50t50 120q0 70-50 120t-120 50Zm0 80q83 0 156-31.5T828-276q-31-36-104-67.5T568-375q-83 0-156 31.5T308-276q31 36 104 67.5T568-177Zm0-240q45 0 77.5-32.5T678-527q0-45-32.5-77.5T568-637q-45 0-77.5 32.5T458-527q0 45 32.5 77.5T568-417Zm0-180Zm0 360Z"/></svg>
                     <span>Profile</span>
                     </a>
@@ -221,34 +221,36 @@
                         </div>
                     </div>
                 </div>
-                <% if(post.postText) {%>
+                <br>
+                <h2><%=post.title%></h2>
+                <% if(!post.path) {%>
                 <p class="post-text"><%=post.postText%></p>
                 <% } else {%>
                     <p class="post-text"><%= post.caption %></p>
                     <div class="post-content">
-                    <% if (post.path.endsWith('.jpg') || post.path.endsWith('.jpeg') || post.path.endsWith('.png') || post.path.endsWith('.gif')) { %>
+                    <% if (post.path && (post.path.endsWith('.jpg') || post.path.endsWith('.jpeg') || post.path.endsWith('.png') || post.path.endsWith('.gif'))) { %>
                         <img src="<%= post.path %>" alt="Post Image" class="post-media">
-                    <% } else if (post.path.endsWith('.mp4') || post.path.endsWith('.webm') || post.path.endsWith('.ogg')) { %>
+                    <% } else if (post.path && (post.path.endsWith('.mp4') || post.path.endsWith('.webm') || post.path.endsWith('.ogg'))) { %>
                         <video controls class="post-media">
                             <source src="<%= post.path %>" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
-                    <% } else if (post.path.endsWith('.mp3') || post.path.endsWith('.wav') || post.path.endsWith('.ogg')) { %>
+                    <% } else if (post.path && (post.path.endsWith('.mp3') || post.path.endsWith('.wav') || post.path.endsWith('.ogg'))) { %>
                         <audio controls class="post-media">
                             <source src="<%= post.path %>" type="audio/mpeg">
                             Your browser does not support the audio tag.
                         </audio>
-                    <% } else if (post.path.endsWith('.pdf')) { %>
+                    <% } else if (post.path && post.path.endsWith('.pdf')) { %>
                         <embed src="<%= post.path %>" type="application/pdf" class="post-media" width="100%" height="500px">
-                    <% } else { %>
+                    <% } else if (post.path) { %>
                         <a href="<%= post.path %>" download class="post-media">Download File</a>
                     <% } %>
-        </div>
+                    </div>
                 <% } %>
-        
+                    <br>
                 <div class="post-footer">
                     <div class="footer-icons">
-                        <button onclick="window.location.href='/upvote/<%=post._id%>'" class="icon-box">
+                        <button onclick="window.location.href='/upvote/<%=Community%>/<%=post._id%>'" class="icon-box">
                             <i class="fas fa-arrow-up"></i>
                             <span class="vote-count"><%=post.upVote%></span>
                         </button>

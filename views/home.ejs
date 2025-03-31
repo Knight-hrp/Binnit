@@ -193,7 +193,9 @@
                     </div>
                 </div>
             </div>
-            <% if(post.postText) {%>
+            <br>
+            <h2><%=post.title%></h2>
+            <% if(!post.path) {%>
             <p class="post-text"><%=post.postText%></p>
             <% } else {%>
                 <p class="post-text"><%= post.caption %></p>
@@ -217,7 +219,7 @@
                 <% } %>
     </div>
             <% } %>
-    
+    <br>
             <div class="post-footer">
                 <div class="footer-icons">
                     <button onclick="window.location.href='/upvote/<%=post._id%>'" class="icon-box">

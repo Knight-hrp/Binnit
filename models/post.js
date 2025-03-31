@@ -11,6 +11,10 @@ const postSchema = new mongoose.Schema({
         ref: 'Community',
         required: true,
     },
+    title: {
+        type: String,
+        required: true,
+    },
     postText: {
         type: String,
     },
