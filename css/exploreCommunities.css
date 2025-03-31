@@ -480,9 +480,62 @@ hr {
     }
 }
 
-
+/* Use Aspect Ratio for Detection */
 .post-media.portrait {
     width: auto;
     height: 500px;
     max-width: 100%;
 }
+
+
+
+.community-list {
+    list-style: none;
+    padding: 0;
+}
+
+.community-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgb(41, 41, 41);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: background 0.3s;
+}
+
+.community-item:hover {
+    background-color: #6A0DAD;
+}
+
+.community-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.community-name {
+    flex-grow: 1;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.visit-btn {
+    background-color: #6A0DAD;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.visit-btn:hover {
+    background-color: #540A91;
+}
+

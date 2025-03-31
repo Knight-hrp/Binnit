@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, "css")));
 app.use(express.json()); 
 app.use(cookieParser()); 
 app.use("/Uploads", express.static("Uploads"));
-app.use("/communityImage", express.static("communityImage"));
+app.use("/communityImage", express.static(path.join(__dirname, 'communityImage')));
 app.use('/favicon_io(2)', express.static(path.join(__dirname, 'Assets/favicon_io(2)')));
 app.use('/image_scrolls', express.static(path.join(__dirname, 'Assets/image_scrolls')));
 app.use("/svg_icons", express.static(path.join(__dirname, 'Assets/svg_icons')));
@@ -48,7 +48,12 @@ app.use("/",staticRoute);
 app.use("/user",userRoute);
 app.use("/profile", restrictToNonLoginUser, userProfileRoute);
 app.use("/community",restrictToNonLoginUser, communityRoute);
-app.use("/upVote", restrictToNonLoginUser, upVoteRoute)
+app.use("/upVote", restrictToNonLoginUser, upVoteRoute);
+// app.use("/createPost", restrictToNonLoginUser, createPostRoute);
+
+app.use("/demo/chat",(req,res)=>{
+    res.render("chatBar");  
+})
 
 server.listen(8000,()=>{
     console.log(`WEB Application run on port: ${port} `);

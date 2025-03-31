@@ -2,26 +2,24 @@ const COMMUNITY = require('../models/community');
 const JOINCOMMUNITY = require('../models/joinCommunity')
 const {ChangeRole} = require('./user')
 
-async function createCommunity(name,body,id)
+async function createCommunity(name,body,id,filepath)
 {
     const communityName = body.communityName;
     const aboutCommunity = body.aboutCommunity;
     await COMMUNITY.create({
         communityName: communityName,
         aboutCommunity: aboutCommunity,
+        imageName: filepath,
         createdBy: id,
     })
-    await COMMUNITY.findOneAndUpdate({communityName: communityName,
-        aboutCommunity: aboutCommunity,
-        createdBy: id},{imageName: "/communityImage/"+name});
 }
 
 async function getCommunity(req,res){
     allCommunities = await COMMUNITY.find({});
-    const joinedCommunities = await JOINCOMMUNITY.find({userID:req.user._id});
+    const joinedCommunities = await JOINCOMMUNITY.find({userID:req.user._id});  
     return res.render("community",{
-        AllCom:allCommunities,
-        joinedCommunities:joinedCommunities,
+        AllCom: allCommunities,
+        joinedCommunities: joinedCommunities,
     })
 }
 
@@ -34,15 +32,26 @@ async function joinCommunity(req,res){
         return res.status(400).send("You are already a member of this community");
     }
     const communityID = await COMMUNITY.findOne({communityName:community});
-    const joinCommunity = new JOINCOMMUNITY({communityID:communityID._id,userID:user_id});
-    await joinCommunity.save();
-    return res.redirect(`/community/${community}`);
+    await JOINCOMMUNITY.create({communityID:communityID._id,userID:user_id});
+    return res.redirect(`/community`);
 }
 
-async function exploreCommunity(req,res){
+async function exploreCommunity(req,res)
+{
     const joinedCommunities = await JOINCOMMUNITY.find({userID:req.user._id});
     const allCommunities = await COMMUNITY.find({});
-    return res.render("exploreCommunity",{joinedCommunities:joinedCommunities,allCommunities:allCommunities});
+    return res.render("exploreCommunity",{joinedCommunities:  joinedCommunities,allCommunities: allCommunities});
+}
+
+async function renderCreatePost(req,res)
+{
+    const community = req.params.community;
+    return res.render("createPost",{community: community});
+}
+async function renderCreatePostFile(req,res)
+{
+    const community = req.params.community;
+    return res.render("createPostFile",{community: community});
 }
 
 
@@ -51,4 +60,6 @@ module.exports = {
     getCommunity,
     joinCommunity,
     exploreCommunity,
+    renderCreatePost,
+    renderCreatePostFile,
 }

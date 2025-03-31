@@ -6,6 +6,9 @@
 
     <title>Binnit - Enjoy your stay</title>
     
+    <!-- Add Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
    <link rel="icon" type="image/x-icon" href="../favicon_io(2)/512px-removebg-previ..._imresizer-removebg-preview.png">
     <link rel="manifest" href="/site.webmanifest" />
     <link
@@ -20,14 +23,15 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=home" 
     />
 
-    <link rel="stylesheet" href="homepage_Styles.css">
-    <link rel="stylesheet" href="scrollbar.css">
-    <script type="text/javascript" src="dropdown_menu.js" defer></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/exploreCommunities.css">
+    <link rel="stylesheet" href="/homepage_Styles.css">
+    <link rel="stylesheet" href="/scrollbar.css">
+    <script type="text/javascript" src="/js/dropdown_menu.js" defer></script>
+
   </head>       
 
   <body>
+    <!-- <div class="display-container">hello</div> -->
     <div class="binnit-header">
 
         <div class="header-left">
@@ -59,10 +63,8 @@
                 <input type="search" class="search-bar-style" placeholder="Discover here..">
            </div>
         </div>
-
-
-
     </div>
+
 
     <div class="binnit-sidebar">
       <div class="space-for-scroll-window"></div>
@@ -70,7 +72,6 @@
         <nav id="sidebar">
             <ul>
             <li id="active">
-
                 <div class="list-style">            
                     <a href="/">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M156-114v-487l324-242.77L804-601v487H566.15v-293.69h-172.3V-114H156Z"/></svg>
@@ -81,24 +82,42 @@
 
             <li>
                 <div class="list-style">
-                    <a href="/profile">
+                    <a href="/user/profile">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M234-276q51-39 114-59.5T480-356q71 0 134 20.5T728-276q35-41 53.5-93T800-480q0-133-93.5-226.5T480-800 253.5-706.5 160-480q0 59 19 111t53 93Zm246-164q-70 0-120-50t-50-120q0-70 50-120t120-50q70 0 120 50t50 120q0 70-50 120t-120 50Zm0 80q83 0 156-31.5T828-276q-31-36-104-67.5T568-375q-83 0-156 31.5T308-276q31 36 104 67.5T568-177Zm0-240q45 0 77.5-32.5T678-527q0-45-32.5-77.5T568-637q-45 0-77.5 32.5T458-527q0 45 32.5 77.5T568-417Zm0-180Zm0 360Z"/></svg>
                     <span>Profile</span>
                     </a>
                 </div>
             </li>
 
+            <hr>
+
             <li>
-                <a href="/community/explore">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-84q-82 0-154-31.5t-125.5-85Q147-254 115.5-326T84-480q0-82 31.5-154t85-125.5Q254-813 326-844.5T480-876q154 0 265.5 102T873-522h-54q-10-94-66-169T608-800v19q0 35-25.5 60.5T522-695h-84v86q0 17-12.5 29.5T396-567h-88v86h61v128h-18L146-558q-3 20-5.5 39t-2.5 39q0 141 99 241.5T480-137v53Zm356-41L696-263q-17 14-36.5 19t-39.5 5q-60 0-100.5-40.5T479-380q0-60 40.5-100.5T620-521q60 0 100.5 40.5T761-380q0 21-5.5 41.5T735-301l140 137-39 39ZM620-293q36 0 61.5-25.5T707-380q0-36-25.5-61.5T620-467q-36 0-61.5 25.5T533-380q0 36 25.5 61.5T620-293Z"/></svg>
-                    <span>Explore Communities</span>
-                </a>
-            </li>
-            <li>
-                <a href="test.html">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M212-172v-402l268-203 268 203v402H550v-248H410v248H212Z"/></svg>
-                    <span>Test</span>
-                </a>
+                <button onclick=toggleSubMenu(this) class="dropdown-button">
+                    <span style="color:#929292; font-size: 16px;"><%=Community%></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m480-555.69-184 184L267.69-400 480-612.31 692.31-400 664-371.69l-184-184Z"/></svg>
+                </button>
+                <ul class="sub-menu show">
+                    <div>
+                        <li>
+                            <a href="/community/post/create/<%=Community%>">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M454-290h54v-162h162v-54H508v-164h-54v164H290v54h164v162Zm26.17 190q-78.81 0-148.21-29.91T211.23-211.1q-51.34-51.28-81.28-120.59Q100-401.01 100-479.83q0-79.07 29.97-148.69t81.35-121.13q51.38-51.5 120.59-80.92Q401.13-860 479.83-860q79.06 0 148.67 29.39 69.62 29.39 121.13 80.85 51.52 51.46 80.94 121.02Q860-559.18 860-480.09t-29.39 148.15q-29.39 69.06-80.84 120.49-51.44 51.44-120.98 81.45-69.55 30-148.62 30Z"/></svg>
+                                <span>Create Post</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/community/post/createfile/<%=Community%>">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-480q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+                                <span>Upload File</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/community/<%=Community%>">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm320-240Z"/></svg>
+                                <span>Community Posts</span>
+                            </a>
+                        </li>
+                    </div>
+                </ul>
             </li>
 
             <hr>
@@ -128,6 +147,14 @@
                                 <span>Events</span>
                             </a>
                         </li>
+
+                        <li>
+                            <a href="/community/explore">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-84q-82 0-154-31.5t-125.5-85Q147-254 115.5-326T84-480q0-82 31.5-154t85-125.5Q254-813 326-844.5T480-876q154 0 265.5 102T873-522h-54q-10-94-66-169T608-800v19q0 35-25.5 60.5T522-695h-84v86q0 17-12.5 29.5T396-567h-88v86h61v128h-18L146-558q-3 20-5.5 39t-2.5 39q0 141 99 241.5T480-137v53Zm356-41L696-263q-17 14-36.5 19t-39.5 5q-60 0-100.5-40.5T479-380q0-60 40.5-100.5T620-521q60 0 100.5 40.5T761-380q0 21-5.5 41.5T735-301l140 137-39 39ZM620-293q36 0 61.5-25.5T707-380q0-36-25.5-61.5T620-467q-36 0-61.5 25.5T533-380q0 36 25.5 61.5T620-293Z"/></svg>
+                                <span>Explore Communities</span>
+                            </a>
+                        </li>
+                        
                         <li><a href="#">Documents</a></li>
                     </div>
                 </ul>
@@ -157,97 +184,85 @@
                     </div>
                 </ul>
             </li>
+
             </ul>
         </nav>
+    
     </div>
     <div id="display-container" class="display-container">
         <% posts.forEach(post => { %>
-        <div class="post-container">
-            <div class="post-header">
-                <div class="profile-info">
-                    <% userProfiles.forEach(userProfile => { %>
-                        <% if(userProfile.user_id.toString() === post.user_id.toString()) { %>
+            <div class="post-container">
+                <div class="post-header">
+                    <div class="profile-info">
+                        <% const userProfile = userProfiles.find(profile => profile.user_id.toString() === post.user_id.toString()) %>
+                        <% if(userProfile) { %>
                             <img src="<%= userProfile.picture_name %>" alt="Profile Picture" class="profile-pic">
+                        <% } else { %>
+                            <img src="/default-profile.png" alt="Default Profile Picture" class="profile-pic">
                         <% } %>
-                    <% }) %>
-                
-                    <% users.forEach(user => { %>
-                        <% if(user._id.toString() === post.user_id.toString()) { %>
+                    
+                        <% const user = users.find(user => user._id.toString() === post.user_id.toString()) %>
+                        <% if(user) { %>
                             <div class="user-details">
                                 <span class="username"><%= user.name %></span>
                             </div>
                         <% } %>
-                    <% }) %>
+                    </div>
+                    <div class="header-buttons">
+                        <button class="menu-btn">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <div class="menu-dropdown">
+                            <ul>
+                                <li>Save Post</li>
+                                <li>Report</li>
+                                <li>Hide</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="header-buttons">
-                    <button class="join-btn">Join</button>
-                    <button class="menu-btn">
-                        <i class="fas fa-ellipsis-h"></i>
-                    </button>
-                    <div class="menu-dropdown">
-                        <ul>
-                            <li>Save Post</li>
-                            <li>Report</li>
-                            <li>Hide</li>
-                        </ul>
+                <% if(post.postText) {%>
+                <p class="post-text"><%=post.postText%></p>
+                <% } else {%>
+                    <p class="post-text"><%= post.caption %></p>
+                    <div class="post-content">
+                    <% if (post.path.endsWith('.jpg') || post.path.endsWith('.jpeg') || post.path.endsWith('.png') || post.path.endsWith('.gif')) { %>
+                        <img src="<%= post.path %>" alt="Post Image" class="post-media">
+                    <% } else if (post.path.endsWith('.mp4') || post.path.endsWith('.webm') || post.path.endsWith('.ogg')) { %>
+                        <video controls class="post-media">
+                            <source src="<%= post.path %>" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    <% } else if (post.path.endsWith('.mp3') || post.path.endsWith('.wav') || post.path.endsWith('.ogg')) { %>
+                        <audio controls class="post-media">
+                            <source src="<%= post.path %>" type="audio/mpeg">
+                            Your browser does not support the audio tag.
+                        </audio>
+                    <% } else if (post.path.endsWith('.pdf')) { %>
+                        <embed src="<%= post.path %>" type="application/pdf" class="post-media" width="100%" height="500px">
+                    <% } else { %>
+                        <a href="<%= post.path %>" download class="post-media">Download File</a>
+                    <% } %>
+        </div>
+                <% } %>
+        
+                <div class="post-footer">
+                    <div class="footer-icons">
+                        <button onclick="window.location.href='/upvote/<%=post._id%>'" class="icon-box">
+                            <i class="fas fa-arrow-up"></i>
+                            <span class="vote-count"><%=post.upVote%></span>
+                        </button>
+                        <button class="icon-box downvote">
+                            <i class="fas fa-arrow-down"></i>
+                        </button>
+                        <button class="icon-box comment-btn">
+                            <i class="fas fa-comment"></i>
+                            <span>Comments</span>
+                        </button>
                     </div>
                 </div>
             </div>
-            <% if(post.postText) {%>
-            <p class="post-text"><%=post.postText%></p>
-            <% } else {%>
-                <p class="post-text"><%= post.caption %></p>
-                <div class="post-content">
-                <% if (post.path.endsWith('.jpg') || post.path.endsWith('.jpeg') || post.path.endsWith('.png') || post.path.endsWith('.gif')) { %>
-                    <img src="<%= post.path %>" alt="Post Image" class="post-media">
-                <% } else if (post.path.endsWith('.mp4') || post.path.endsWith('.webm') || post.path.endsWith('.ogg')) { %>
-                    <video controls class="post-media">
-                        <source src="<%= post.path %>" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                <% } else if (post.path.endsWith('.mp3') || post.path.endsWith('.wav') || post.path.endsWith('.ogg')) { %>
-                    <audio controls class="post-media">
-                        <source src="<%= post.path %>" type="audio/mpeg">
-                        Your browser does not support the audio tag.
-                    </audio>
-                <% } else if (post.path.endsWith('.pdf')) { %>
-                    <embed src="<%= post.path %>" type="application/pdf" class="post-media" width="100%" height="500px">
-                <% } else { %>
-                    <a href="<%= post.path %>" download class="post-media">Download File</a>
-                <% } %>
+            <% }) %>
     </div>
-            <% } %>
-    
-            <div class="post-footer">
-                <div class="footer-icons">
-                    <button onclick="window.location.href='/upvote/<%=post._id%>'" class="icon-box">
-                        <i class="fas fa-arrow-up"></i>
-                        <span class="vote-count"><%=post.upVote%></span>
-                    </button>
-                    <button class="icon-box downvote">
-                        <i class="fas fa-arrow-down"></i>
-                    </button>
-                    <button class="icon-box comment-btn">
-                        <i class="fas fa-comment"></i>
-                        <span>Comments</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <% }) %>
-    </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".post-media").forEach(media => {
-                media.onload = function () {
-                    if (this.naturalHeight > this.naturalWidth) {
-                        this.classList.add("portrait");
-                    }
-                };
-            });
-        });
-    </script>
-        
   </body>
 </html>

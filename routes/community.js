@@ -1,13 +1,15 @@
 const express = require('express');
 const multer = require('multer');
 
-const { createCommunity, getCommunity,joinCommunity, exploreCommunity } = require('../controllers/community');
+const { createCommunity, getCommunity,joinCommunity, exploreCommunity, renderCreatePost, renderCreatePostFile } = require('../controllers/community');
 
 const router = express.Router();
 
 const JOINCOMMUNITY = require('../models/joinCommunity');
 const POST = require('../models/post');
 const COMMUNITY = require('../models/community');
+const USER = require('../models/user');
+const USERPROFILE = require('../models/userProfilePicture');
 const path = require('path');
 const {} = require('../socketHandler')
 
@@ -31,24 +33,42 @@ router.get("/",getCommunity);
 
 router.get("/addCommunity",(req,res)=>{
     res.render("addCommunity");
-})
+});
+
+router.get("/join/:community",joinCommunity);
 
 router.post("/addCommunity",upload.single("image"),(req,res)=>{
-    createCommunity(req.file.filename,req.body,req.user._id);
+    const path = '/communityImage/' + req.file.filename;
+    createCommunity(req.file.filename, req.body , req.user._id, path);
     return res.redirect("/community");
 });
 
 router.get("/explore",exploreCommunity)
 
 router.get('/:community',async (req,res)=>{
-    const community_id = await COMMUNITY.findOne({communityName: req.params.community});
-    const communityPost = await POST.find({community_id: community_id._id});
-    return res.render("chatBar",{Community: req.params.community,CommunityPost: communityPost});
+    try {
+        const community = await COMMUNITY.findOne({communityName: req.params.community});
+        if (!community) {
+            return res.status(404).send("Community not found");
+        }
+        const communityPost = await POST.find({community_id: community._id});
+        const users = await USER.find({});
+        const userProfiles = await USERPROFILE.find({});
+        
+        res.render("insideCommunity",{
+            Community: req.params.community,
+            posts: communityPost,
+            userProfiles: userProfiles,
+            users: users
+        });
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).send("Internal Server Error");
+    }
 })
 
 router.post("/:community/postText",async (req,res)=>{
     const communityID = await COMMUNITY.findOne({communityName: req.params.community});
-    console.log(communityID);
     const post = await POST.create({
         postText: req.body.message,
         community_id: communityID._id,
@@ -81,9 +101,9 @@ router.post("/:community/postFile",upload.single("image"),async(req,res)=>{
     res.json({ message: "successfully!", filename: filePath });
 })
 
-router.get("/join/:community",joinCommunity)
 
-router.get("/:community")
+router.get("/post/create/:community",renderCreatePost);
+router.get("/post/createFile/:community",renderCreatePostFile);
 
     
 module.exports = router;
