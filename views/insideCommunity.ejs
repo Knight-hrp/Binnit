@@ -7,26 +7,15 @@
     <title>Binnit - Enjoy your stay</title>
     
     <!-- Add Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-   <link rel="icon" type="image/x-icon" href="../favicon_io(2)/512px-removebg-previ..._imresizer-removebg-preview.png">
-    <link rel="manifest" href="/site.webmanifest" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
-
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=home" 
-    />
-
+    <!-- <link rel="stylesheet" href="http://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=home" /> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/exploreCommunities.css">
-    <link rel="stylesheet" href="/homepage_Styles.css">
+    <link rel="stylesheet" href="/createPost.css">
     <link rel="stylesheet" href="/scrollbar.css">
-    <script type="text/javascript" src="/js/dropdown_menu.js" defer></script>
+    <link rel="stylesheet" href="/community-info.css">
+    <link rel="stylesheet" href="/posts.css">
+    <link rel="stylesheet" href="/post-menu.css">
+
 
   </head>       
 
@@ -190,81 +179,332 @@
     
     </div>
     <div id="display-container" class="display-container">
-        <% posts.forEach(post => { %>
-            <div class="post-container">
-                <div class="post-header">
-                    <div class="profile-info">
-                        <% const userProfile = userProfiles.find(profile => profile.user_id.toString() === post.user_id.toString()) %>
-                        <% if(userProfile) { %>
-                            <img src="<%= userProfile.picture_name %>" alt="Profile Picture" class="profile-pic">
-                        <% } else { %>
-                            <img src="/default-profile.png" alt="Default Profile Picture" class="profile-pic">
-                        <% } %>
-                    
-                        <% const user = users.find(user => user._id.toString() === post.user_id.toString()) %>
-                        <% if(user) { %>
-                            <div class="user-details">
-                                <span class="username"><%= user.name %></span>
-                            </div>
-                        <% } %>
+        <!-- Community Information Template -->
+        <div class="community-info-container">
+            <div class="community-header">
+                <div class="community-profile">
+                    <img src="<%=community.imageName%>" alt="Community Profile" class="community-profile-pic">
+                    <div class="community-details">
+                        <h1 class="community-name"><%=Community%></h1>
+                        <p class="community-description"><%=community.aboutCommunity%></p>
                     </div>
-                    <div class="header-buttons">
-                        <button class="menu-btn">
-                            <i class="fas fa-ellipsis-h"></i>
-                        </button>
-                        <div class="menu-dropdown">
-                            <ul>
-                                <li>Save Post</li>
-                                <li>Report</li>
-                                <li>Hide</li>
-                            </ul>
+                </div>
+                <div class="community-actions">
+                    <button onclick="window.location.href='/community/post/create/<%=Community%>'" class="action-btn create-post-btn">
+                        <i class="fas fa-plus"></i>
+                        Create Post
+                    </button>
+                    <button onclick="window.location.href='/community/post/createfile/<%=Community%>'" class="action-btn upload-file-btn">
+                        <i class="fas fa-upload"></i>
+                        Upload File
+                    </button>
+                    <% if (typeof isAdmin !== 'undefined' && isAdmin) { %>
+                    <button onclick="window.location.href='/community/<%=Community%>/assign-moderator'" class="action-btn assign-moderator-btn">
+                        <i class="fas fa-user-shield"></i>
+                        Assign Moderator
+                    </button>
+                    <% } %>
+                    <% if (typeof req !== 'undefined' && req.user) { %>
+                    <button onclick="confirmLeaveCommunity('<%=Community%>')" class="action-btn leave-community-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Leave Community
+                    </button>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Posts Container -->
+        <div class="posts-container">
+            <% posts.forEach(post => { %>
+                <div class="post-container">
+                    <div class="post-header">
+                        <div class="profile-info">
+                            <% const userProfile = userProfiles.find(profile => profile.user_id.toString() === post.user_id.toString()) %>
+                            <% if(userProfile) { %>
+                                <img src="<%= userProfile.picture_name %>" alt="Profile Picture" class="profile-pic">
+                            <% } else { %>
+                                <img src="/default-profile.png" alt="Default Profile Picture" class="profile-pic">
+                            <% } %>
+                        
+                            <% const user = users.find(user => user._id.toString() === post.user_id.toString()) %>
+                            <% if(user) { %>
+                                <div class="user-details">
+                                    <span class="username"><%= user.name %></span>
+                                </div>
+                            <% } %>
+                        </div>
+                        <div class="header-buttons">
+                            <button class="menu-btn" onclick="toggleMenuDropdown(this)">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                            <div class="menu-dropdown">
+                                <ul>
+                                    <% 
+                                    // Check if current user is post owner, admin, or moderator
+                                    let isPostOwner = false;
+                                    let isModerator = false; 
+                                    let canEditDelete = false;
+                                    
+                                    // Only check if req and req.user are defined
+                                    if (typeof req !== 'undefined' && req && req.user) {
+                                        isPostOwner = post.user_id.toString() === req.user._id.toString();
+                                        
+                                        // Check if the user is a moderator
+                                        if (communityRoles) {
+                                            const moderatorRole = communityRoles.find(role => 
+                                                role.user_id.toString() === req.user._id.toString() && 
+                                                (role.role === 'moderator' || role.role === 'admin')
+                                            );
+                                            
+                                            isModerator = !!moderatorRole;
+                                        }
+                                        
+                                        // User can edit/delete if they own the post or are a moderator/admin
+                                        canEditDelete = isPostOwner || isModerator;
+                                    }
+                                    %>
+                                    
+                                    <% if (canEditDelete) { %>
+                                    <li>
+                                        <a href="/community/<%=Community%>/edit-post/<%=post._id%>">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" onclick="confirmDeletePost('<%=post._id%>', '<%=Community%>')">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </a>
+                                    </li>
+                                    <% } %>
+                                    <li>
+                                        <a href="#" onclick="savePost('<%=post._id%>')">
+                                            <i class="fas fa-bookmark"></i> Save Post
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" onclick="reportPost('<%=post._id%>')">
+                                            <i class="fas fa-flag"></i> Report
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" onclick="hidePost('<%=post._id%>')">
+                                            <i class="fas fa-eye-slash"></i> Hide
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <h2 class="post-title"><%=post.title%></h2>
+                    <% if(!post.path) {%>
+                    <p class="post-text"><%=post.postText%></p>
+                    <% } else {%>
+                        <p class="post-text"><%= post.caption %></p>
+                        <div class="post-content">
+                        <% if (post.path && (post.path.endsWith('.jpg') || post.path.endsWith('.jpeg') || post.path.endsWith('.png') || post.path.endsWith('.gif'))) { %>
+                            <img src="<%= post.path %>" alt="Post Image" class="post-media">
+                        <% } else if (post.path && (post.path.endsWith('.mp4') || post.path.endsWith('.webm') || post.path.endsWith('.ogg'))) { %>
+                            <video controls class="post-media">
+                                <source src="<%= post.path %>" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        <% } else if (post.path && (post.path.endsWith('.mp3') || post.path.endsWith('.wav') || post.path.endsWith('.ogg'))) { %>
+                            <audio controls class="post-media">
+                                <source src="<%= post.path %>" type="audio/mpeg">
+                                Your browser does not support the audio tag.
+                            </audio>
+                        <% } else if (post.path && post.path.endsWith('.pdf')) { %>
+                            <embed src="<%= post.path %>" type="application/pdf" class="post-media" width="100%" height="500px">
+                        <% } else if (post.path) { %>
+                            <a href="<%= post.path %>" download class="post-media">Download File</a>
+                        <% } %>
+                        </div>
+                    <% } %>
+                    <div class="post-footer">
+                        <div class="footer-icons">
+                            <button onclick="window.location.href='/upvote/<%=Community%>/<%=post._id%>'" class="icon-box">
+                                <i class="fas fa-arrow-up"></i>
+                                <span class="vote-count"><%=post.upVote%></span>
+                            </button>
+                            <button class="icon-box downvote">
+                                <i class="fas fa-arrow-down"></i>
+                            </button>
+                            <button class="icon-box comment-btn" onclick="window.location.href='/comments/1/<%=community._id%>/<%=post._id%>'">
+                                <i class="fas fa-comment"></i>
+                                <span>Comments</span>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <br>
-                <h2><%=post.title%></h2>
-                <% if(!post.path) {%>
-                <p class="post-text"><%=post.postText%></p>
-                <% } else {%>
-                    <p class="post-text"><%= post.caption %></p>
-                    <div class="post-content">
-                    <% if (post.path && (post.path.endsWith('.jpg') || post.path.endsWith('.jpeg') || post.path.endsWith('.png') || post.path.endsWith('.gif'))) { %>
-                        <img src="<%= post.path %>" alt="Post Image" class="post-media">
-                    <% } else if (post.path && (post.path.endsWith('.mp4') || post.path.endsWith('.webm') || post.path.endsWith('.ogg'))) { %>
-                        <video controls class="post-media">
-                            <source src="<%= post.path %>" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                    <% } else if (post.path && (post.path.endsWith('.mp3') || post.path.endsWith('.wav') || post.path.endsWith('.ogg'))) { %>
-                        <audio controls class="post-media">
-                            <source src="<%= post.path %>" type="audio/mpeg">
-                            Your browser does not support the audio tag.
-                        </audio>
-                    <% } else if (post.path && post.path.endsWith('.pdf')) { %>
-                        <embed src="<%= post.path %>" type="application/pdf" class="post-media" width="100%" height="500px">
-                    <% } else if (post.path) { %>
-                        <a href="<%= post.path %>" download class="post-media">Download File</a>
-                    <% } %>
-                    </div>
-                <% } %>
-                    <br>
-                <div class="post-footer">
-                    <div class="footer-icons">
-                        <button onclick="window.location.href='/upvote/<%=Community%>/<%=post._id%>'" class="icon-box">
-                            <i class="fas fa-arrow-up"></i>
-                            <span class="vote-count"><%=post.upVote%></span>
-                        </button>
-                        <button class="icon-box downvote">
-                            <i class="fas fa-arrow-down"></i>
-                        </button>
-                        <button class="icon-box comment-btn">
-                            <i class="fas fa-comment"></i>
-                            <span>Comments</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
             <% }) %>
+        </div>
     </div>
+
+    <!-- Delete confirmation dialog -->
+    <div class="confirmation-dialog" id="deleteConfirmDialog">
+        <div class="dialog-content">
+            <div class="dialog-header">
+                <h3>Delete Post</h3>
+            </div>
+            <div class="dialog-body">
+                <p>Are you sure you want to delete this post? This action cannot be undone.</p>
+            </div>
+            <div class="dialog-actions">
+                <button class="dialog-btn cancel-btn" id="cancelDelete">Cancel</button>
+                <button class="dialog-btn confirm-btn" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leave community confirmation dialog -->
+    <div class="confirmation-dialog" id="leaveCommunityDialog">
+        <div class="dialog-content">
+            <div class="dialog-header">
+                <h3>Leave Community</h3>
+            </div>
+            <div class="dialog-body">
+                <p>Are you sure you want to leave this community? You will no longer have access to community-specific features.</p>
+            </div>
+            <div class="dialog-actions">
+                <button class="dialog-btn cancel-btn" id="cancelLeave">Cancel</button>
+                <button class="dialog-btn confirm-btn leave-btn" id="confirmLeave">Leave Community</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle menu dropdown visibility
+        function toggleMenuDropdown(button) {
+            // Close all other open dropdowns first
+            const allDropdowns = document.querySelectorAll('.menu-dropdown');
+            allDropdowns.forEach(dropdown => {
+                if (dropdown !== button.nextElementSibling) {
+                    dropdown.classList.remove('show');
+                }
+            });
+            
+            // Toggle the current dropdown
+            const dropdown = button.nextElementSibling;
+            dropdown.classList.toggle('show');
+            
+            // Add click outside listener
+            setTimeout(() => {
+                document.addEventListener('click', closeDropdownsOnClickOutside);
+            }, 100);
+        }
+        
+        // Close all dropdowns when clicking outside
+        function closeDropdownsOnClickOutside(event) {
+            if (!event.target.closest('.menu-btn') && !event.target.closest('.menu-dropdown')) {
+                const allDropdowns = document.querySelectorAll('.menu-dropdown');
+                allDropdowns.forEach(dropdown => {
+                    dropdown.classList.remove('show');
+                });
+                document.removeEventListener('click', closeDropdownsOnClickOutside);
+            }
+        }
+        
+        // Custom delete confirmation
+        let deletePostId = '';
+        let deleteCommunity = '';
+        
+        function confirmDeletePost(postId, community) {
+            deletePostId = postId;
+            deleteCommunity = community;
+            
+            const dialog = document.getElementById('deleteConfirmDialog');
+            dialog.classList.add('show');
+            
+            // Close dialog when clicking outside
+            dialog.addEventListener('click', function(event) {
+                if (event.target === dialog) {
+                    closeConfirmDialog();
+                }
+            });
+            
+            // Setup buttons
+            document.getElementById('cancelDelete').addEventListener('click', closeConfirmDialog);
+            document.getElementById('confirmDelete').addEventListener('click', executeDelete);
+        }
+        
+        function closeConfirmDialog() {
+            const dialog = document.getElementById('deleteConfirmDialog');
+            dialog.classList.remove('show');
+        }
+        
+        function executeDelete() {
+            window.location.href = `/community/${deleteCommunity}/delete-post/${deletePostId}`;
+        }
+        
+        // Leave community confirmation
+        let leaveCommunityName = '';
+        
+        function confirmLeaveCommunity(communityName) {
+            leaveCommunityName = communityName;
+            
+            const dialog = document.getElementById('leaveCommunityDialog');
+            dialog.classList.add('show');
+            
+            // Close dialog when clicking outside
+            dialog.addEventListener('click', function(event) {
+                if (event.target === dialog) {
+                    closeLeaveCommunityDialog();
+                }
+            });
+            
+            // Setup buttons
+            document.getElementById('cancelLeave').addEventListener('click', closeLeaveCommunityDialog);
+            document.getElementById('confirmLeave').addEventListener('click', executeLeaveCommunity);
+        }
+        
+        function closeLeaveCommunityDialog() {
+            const dialog = document.getElementById('leaveCommunityDialog');
+            dialog.classList.remove('show');
+        }
+        
+        function executeLeaveCommunity() {
+            window.location.href = `/community/leave/${leaveCommunityName}`;
+        }
+        
+        // Placeholder functions for other actions
+        function savePost(postId) {
+            alert('Post saved! (This is a placeholder - functionality to be implemented)');
+        }
+        
+        function reportPost(postId) {
+            alert('Post reported! (This is a placeholder - functionality to be implemented)');
+        }
+        
+        function hidePost(postId) {
+            alert('Post hidden! (This is a placeholder - functionality to be implemented)');
+        }
+
+        // Check for error parameters
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('error')) {
+                if (urlParams.get('error') === 'admin_leave') {
+                    showNotification('As an admin, you cannot leave your own community. Transfer ownership first or delete the community.', 'error');
+                }
+            }
+        });
+        
+        // Notification function
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Remove notification after 5 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 5000);
+        }
+    </script>
   </body>
 </html>

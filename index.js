@@ -15,6 +15,7 @@ const userRoute = require("./routes/user");
 const userProfileRoute = require("./routes/userProfile");
 const communityRoute = require('./routes/community');
 const upVoteRoute = require('./routes/upVote')
+const commentsRoute = require('./routes/comments')
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "css")));
@@ -33,7 +34,8 @@ const COMMUNITY = require('./models/community')
 const JOINCOMMUNITY = require('./models/joinCommunity');
 const POST = require('./models/post');
 const UPVOTE = require('./models/upVote');
-const COMMENT = require('./models/comment')
+const COMMENTS = require('./models/comments');
+const COMMUNTIYROLE = require('./models/communityRole');
 
 const {connectToMongoDB} = require("./connect")
 
@@ -49,7 +51,7 @@ app.use("/user",userRoute);
 app.use("/profile", restrictToNonLoginUser, userProfileRoute);
 app.use("/community",restrictToNonLoginUser, communityRoute);
 app.use("/upVote", restrictToNonLoginUser, upVoteRoute);
-// app.use("/createPost", restrictToNonLoginUser, createPostRoute);
+app.use("/comments", commentsRoute)
 
 app.use("/demo/chat",(req,res)=>{
     res.render("chatBar");  
