@@ -6,8 +6,7 @@
     <title>Join | Binnit</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
+      rel="stylesheet"/>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
@@ -19,6 +18,40 @@
     <link rel="stylesheet" href="/sign_page.css">
     <link rel="stylesheet" href="/homepage_Styles.css">
     <link rel="icon" type="image/x-icon" href="../favicon_io(2)/512px-removebg-previ..._imresizer-removebg-preview.png">
+
+    <!-- <style>
+        .error-message {
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffffff;
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px solid #ff4444;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .error-message::before {
+            content: "⚠️";
+            font-size: 20px;
+            margin-right: 8px;
+        }
+
+        .error-message:hover {
+            background: rgba(0, 0, 0, 0.9);
+            border-color: #ff6666;
+            transition: all 0.3s ease;
+        }
+    </style> -->
 
 </head>
 
@@ -42,6 +75,12 @@
         <div class="right-section">
             <h2 class="sign_up_head">JOIN US NOW</h2>
 
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="error-message">
+                    <%= error %>
+                </div>
+            <% } %>
+
             <form action="/user/signup" method="post" >
                 <label>Add your Username</label>
                 <input type="text" placeholder="Create a good username" name = "name">
@@ -56,14 +95,7 @@
             <div class="divider">
                 <hr> <span>or</span> <hr>
             </div>
-
-            <button class="social-btn">Continue with Google</button>
-            <button class="social-btn">Continue with Apple</button>
-            <button class="social-btn">Continue with Facebook</button>
-
             <p class="signup-text">Already been here, Innit? <a href="/user/login"> Log in</a></p>
-
-
             <p class="bottom-text"> By signing in to Binnit, I confirm that I acknowledge all the non-existent rules of Binnit—and don't care about them either. </p>
         </div>
     </div>

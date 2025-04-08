@@ -186,8 +186,7 @@
             <div class="original-post">
                 <div class="post-header">
                     <div class="post-user-info">
-                        <img src="<%= userProfile.picture_name%>" alt="User Profile" class="user-avatar">
-                        <div class="post-meta">
+                        <img src="<%= userProfile && userProfile.picture_name ? userProfile.picture_name : 'https://bootdey.com/img/Content/avatar/avatar6.png' %>" alt="User Profile" class="user-avatar">                        <div class="post-meta">
                             <span class="username"><%= user.name %></span>
                             <!-- <span class="post-time">Posted <%= new Date(post.createdAt).toLocaleString() %></span> -->
                             <span class="community-name">r/<%= community.communityName %></span>
@@ -210,8 +209,12 @@
                             <span class="vote-label">votes</span>
                         </div>
                         <div class="vote-buttons">
-                            <button class="vote-btn upvote" onclick="window.location.href='/upvote/<%=flag%>/<%=community._id%>/<%=post._id%>'">
-                                <i class="fas fa-arrow-up"></i>
+                            <button class="vote-btn upvote <%= isLiked ? 'liked' : '' %>" onclick="window.location.href='/upvote/<%=flag%>/<%=community._id%>/<%=post._id%>'">
+                                <% if (isLiked) { %>
+                                    <i class="fas fa-arrow-up fa-solid"></i>
+                                <% } else { %>
+                                    <i class="fas fa-arrow-up"></i>
+                                <% } %>
                                 <span>Upvote</span>
                             </button>
                             <button class="vote-btn downvote">
@@ -226,7 +229,7 @@
             <!-- Comment Input Section -->
             <div class="comment-input-section">
                 <div class="comment-input-wrapper">
-                    <img src="<%= curr_profile.picture_name %>" alt="Your Profile" class="user-avatar">
+                    <img src="<%= curr_profile ? curr_profile.picture_name : 'https://bootdey.com/img/Content/avatar/avatar6.png' %>" alt="Your Profile" class="user-avatar">
                     <div class="comment-input-container">
                         <form id="commentForm" action="/comments/<%= community._id %>/<%= post._id %>" method="POST">
                             <textarea 
@@ -268,6 +271,7 @@
                             <div class="comment-content">
                                 <p><%= comment.comment_text %></p>
                             </div>
+                            <hr>
                             <div class="comment-actions">
                                 <button class="vote-btn upvote">
                                     <i class="fas fa-arrow-up"></i>
@@ -500,7 +504,7 @@
             display: flex;
             gap: 20px;
             align-items: center;
-            padding: 12px 0;
+            padding: 1px 0;
             opacity: 1;
             visibility: visible;
             height: auto;
@@ -797,6 +801,28 @@
             background: rgba(0, 121, 211, 0.2);
             transform: translateX(4px);
         }
+
+        .vote-btn.upvote.liked {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .vote-btn.upvote.liked i {
+            font-weight: 900;
+        }
+        
+        .vote-btn.upvote {
+            transition: all 0.2s ease;
+        }
+        
+        .vote-btn.upvote:hover {
+            color: #4CAF50;
+            transform: translateY(-2px);
+        }
+        
+        .vote-btn.upvote:hover i {
+            transform: scale(1.1);
+        }
     </style>
 
     <script>
@@ -825,52 +851,19 @@
             // Handle comment form submission
             const commentForm = document.getElementById('commentForm');
             if (commentForm) {
-                commentForm.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-                    
+                commentForm.addEventListener('submit', function(e) {
                     const submitBtn = this.querySelector('.submit-btn');
                     const commentText = textarea.value;
                     
                     if (!commentText.trim()) {
                         alert('Please enter a comment');
+                        e.preventDefault();
                         return;
                     }
                     
                     // Show loading state
                     submitBtn.classList.add('loading');
                     submitBtn.disabled = true;
-                    
-                    try {
-                        const response = await fetch(this.action, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ commentText })
-                        });
-                        
-                        if (response.ok) {
-                            // Clear the input and reset height
-                            textarea.value = '';
-                            textarea.style.height = 'auto';
-                            hideCommentActions();
-                            
-                            // Refresh the comments section
-                            window.location.reload();
-                        } else {
-                            throw new Error('Failed to post comment');
-                        }
-
-                    } catch (error) {
-                        console.error('Error posting comment:', error);
-                        alert(error.message || 'Failed to post comment. Please try again.');
-                    } 
-                    
-                    finally {
-                        // Reset button state
-                        submitBtn.classList.remove('loading');
-                        submitBtn.disabled = false;
-                    }
                 });
             }
 

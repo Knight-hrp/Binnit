@@ -9,8 +9,19 @@ async function renderHome(req,res)
     const post = await POST.find().sort({ createdAt: -1 });
     const user = await USER.find({});
     const community = await COMMUNITY.find({});
-    const userProfile = await PROFILEPICTURE.find({}); 
-    res.render("home",{posts: post,users:user,userProfiles: userProfile,community: community,});
+    const userProfile = await PROFILEPICTURE.find({});
+    const userUid = req.cookies?.uid; 
+    if (!userUid) {
+        return res.render("home",{posts: post,users:user,userProfiles: userProfile,community: community,});
+    }
+    else
+    {
+        const { getUser } = require("../service/auth")
+        const curr_user = getUser(userUid);
+        const liked = await UPVOTE.find({user_id: curr_user._id});
+        console.log(liked);
+        return res.render("home",{posts: post,users:user,userProfiles: userProfile,community: community,upvotes: liked});
+    }
 }
 
 async function setUpVote(post_id, user_id)

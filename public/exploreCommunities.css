@@ -1,0 +1,119 @@
+/* Add these styles for search results */
+
+.search-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    padding: 18px 24px;
+    background: linear-gradient(145deg, rgba(0, 121, 211, 0.1), rgba(0, 121, 211, 0.05));
+    border-radius: 12px;
+    border-left: 4px solid #0079d3;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.search-results-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.search-results-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #ffffff;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.search-results-header h2::before {
+    content: '🔍';
+    font-size: 20px;
+}
+
+.clear-search-btn {
+    padding: 10px 18px;
+    background: rgba(0, 0, 0, 0.3);
+    color: #e3e3e3;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.clear-search-btn::after {
+    content: '×';
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.clear-search-btn:hover {
+    background: rgba(0, 0, 0, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+.clear-search-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.no-results {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 30px;
+    text-align: center;
+    background: linear-gradient(145deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
+    border-radius: 12px;
+    margin: 30px 0;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.no-results::before {
+    content: '📭';
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.no-results p {
+    font-size: 18px;
+    color: #bcbcbc;
+    margin: 10px 0 0 0;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Existing styles below */ 

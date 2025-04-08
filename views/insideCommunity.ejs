@@ -16,6 +16,35 @@
     <link rel="stylesheet" href="/posts.css">
     <link rel="stylesheet" href="/post-menu.css">
 
+    <!-- Add styling for liked posts -->
+    <style>
+        .icon-box.liked {
+            color: #0079d3;
+            font-weight: bold;
+        }
+        
+        .icon-box.liked .fa-arrow-up,
+        .icon-box.liked .vote-count {
+            color: #0079d3;
+        }
+        
+        .fa-solid.fa-arrow-up {
+            font-weight: 900;
+        }
+        
+        .icon-box {
+            transition: all 0.2s ease;
+        }
+        
+        .icon-box:hover {
+            color: #0079d3;
+            transform: translateY(-2px);
+        }
+        
+        .icon-box:hover .fa-arrow-up {
+            transform: scale(1.1);
+        }
+    </style>
 
   </head>       
 
@@ -323,8 +352,20 @@
                     <% } %>
                     <div class="post-footer">
                         <div class="footer-icons">
-                            <button onclick="window.location.href='/upvote/<%=Community%>/<%=post._id%>'" class="icon-box">
-                                <i class="fas fa-arrow-up"></i>
+                            <%
+                                let isLiked = false;
+                                upvotes.forEach(upvote=>{
+                                    if(post._id.toString() === upvote.post_id.toString()){
+                                        isLiked = true;
+                                    }
+                                });
+                            %>
+                            <button onclick="window.location.href='/upvote/<%=Community%>/<%=post._id%>'" class="icon-box <%= isLiked ? 'liked' : '' %>">
+                                <% if (isLiked) { %>
+                                    <i class="fas fa-arrow-up fa-solid"></i>
+                                <% } else { %>
+                                    <i class="fas fa-arrow-up"></i>
+                                <% } %>
                                 <span class="vote-count"><%=post.upVote%></span>
                             </button>
                             <button class="icon-box downvote">

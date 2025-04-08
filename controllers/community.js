@@ -108,6 +108,48 @@ async function renderAssignModerator(req,res)
     });
 }
 
+async function searchCommunity(req, res) {
+    let searchQuery = req.body.search || "";  // fallback to empty string
+    searchQuery = String(searchQuery).trim();  // ensure it's a string and trim whitespace
+    const referer = req.headers.referer || '';
+
+    // If search is empty, redirect back to appropriate page
+    if (!searchQuery) {
+        if (referer.includes('/explore')) {
+            return res.redirect('/community/explore');
+        } else {
+            return res.redirect('/community');
+        }
+    }
+
+    try {
+        const communities = await COMMUNITY.find({
+            communityName: { $regex: searchQuery, $options: 'i' }
+        });
+
+        const joinedCommunities = await JOINCOMMUNITY.find({ userID: req.user._id });
+
+        // Determine which template to render based on referer
+        if (referer.includes('/explore')) {
+            return res.render("exploreCommunity", {
+                searchResults: communities,
+                joinedCommunities: joinedCommunities,
+                allCommunities: communities,
+                searchQuery: searchQuery
+            });
+        } else {
+            return res.render("community", {
+                AllCom: communities,
+                joinedCommunities: joinedCommunities,
+                searchQuery: searchQuery,
+                isSearchResult: true
+            });
+        }
+    } catch (error) {
+        console.error("Search error:", error);
+        return res.status(500).send("Server error while searching.");
+    }
+}
 
 
 module.exports = {
@@ -118,4 +160,5 @@ module.exports = {
     renderCreatePost,
     renderCreatePostFile,
     renderAssignModerator,
+    searchCommunity,
 }

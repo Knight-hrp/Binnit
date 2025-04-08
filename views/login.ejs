@@ -20,6 +20,41 @@
     <link rel="stylesheet" href="/homepage_Styles.css">
     <link rel="icon" type="image/x-icon" href="../favicon_io(2)/512px-removebg-previ..._imresizer-removebg-preview.png">
 
+    <style>
+        .error-message {
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffffff;
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-top: 1px;
+            border: 2px solid #ff4444;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 20px
+        }
+
+        .error-message::before {
+            content: "⚠️";
+            font-size: 20px;
+            margin-right: 8px;
+        }
+
+        .error-message:hover {
+            background: rgba(0, 0, 0, 0.9);
+            border-color: #ff6666;
+            transition: all 0.3s ease;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -40,11 +75,18 @@
         </div>
 
         <div class="right-section">
-            <h2>Log In</h2>
-            <label>Username</label>
+            <h2 class="login_head">LOG IN</h2>
+
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="error-message">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <label>Email Id</label>
 
             <form method="post" action="/user/Login">
-                <input type="text" placeholder="Enter your username" name="email">
+                <input type="text" placeholder="Enter your email" name="email">
                 <label>Password</label>
                 <input type="password" class="password-field" placeholder="Enter your password" name ="password">
                 <button class="login-btn" type = "submit">Next</button>
@@ -53,15 +95,10 @@
             <div class="divider">
                 <hr> <span>or</span> <hr>
             </div>
-
-            <button class="social-btn">Continue with Google</button>
-            <button class="social-btn">Continue with Apple</button>
-            <button class="social-btn">Continue with Facebook</button>
-
             <p class="signup-text">Been Innit? <a href="/user/signup">Join Binnit</a></p>
 
 
-            <p class="bottom-text"> By logging in to Binnit, I confirm that I acknowledge all the non-existent rules of Binnit—and don’t care about them either. </p>
+            <p class="bottom-text"> By logging in to Binnit, I confirm that I acknowledge all the non-existent rules of Binnit—and don't care about them either. </p>
         </div>
     </div>
 

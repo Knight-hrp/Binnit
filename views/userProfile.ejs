@@ -1,169 +1,687 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <!--  This file has been downloaded from bootdey.com @bootdey on twitter -->
-    <!--  All snippets are MIT license http://bootdey.com/license -->
-    <title>profile edit data and skills - Bootdey.com</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style type="text/css">
-    	body{
-    background: #f7f7ff;
-    margin-top:20px;
-}
-.card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
-    background-color: #fff;
-    background-clip: border-box;
-    border: 0 solid transparent;
-    border-radius: .25rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 2px 6px 0 rgb(218 218 253 / 65%), 0 2px 6px 0 rgb(206 206 238 / 54%);
-}
-.me-2 {
-    margin-right: .5rem!important;
-}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Binnit - Enjoy your stay</title>
+    
+   <link rel="icon" type="image/x-icon" href="../favicon_io(2)/512px-removebg-previ..._imresizer-removebg-preview.png">
+    <link rel="manifest" href="/site.webmanifest" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="profilePage.css">
+    <link rel="stylesheet" href="scrollbar.css">
+    <script type="text/javascript" src="dropdown_menu.js" defer></script>
+    <style>
+        /* Post card styles */
+        .post-card {
+            background: linear-gradient(145deg, #1c1c1c, #1a1a1a);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .post-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .post-community a {
+            color: #0079d3;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .post-community a:hover {
+            color: #00a8ff;
+            text-decoration: underline;
+        }
+
+        .post-date {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .post-title {
+            margin: 0 0 16px 0;
+            font-size: 18px;
+            line-height: 1.4;
+        }
+
+        .post-title a {
+            color: #e3e3e3;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .post-title a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .post-text {
+            color: #cccccc;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .post-media {
+            margin: 16px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .post-media img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .post-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 16px;
+        }
+
+        .vote-count, .comment-count {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #888;
+            font-size: 13px;
+        }
+
+        .view-btn {
+            background: rgba(0, 121, 211, 0.1);
+            color: #0079d3;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(0, 121, 211, 0.2);
+        }
+
+        .view-btn:hover {
+            background: rgba(0, 121, 211, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Comment card styles */
+        .comment-card {
+            background: linear-gradient(145deg, #1c1c1c, #1a1a1a);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .comment-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .comment-post-info {
+            font-size: 13px;
+        }
+
+        .comment-post-info span {
+            color: #888;
+        }
+
+        .comment-post-info a {
+            color: #0079d3;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .comment-post-info a:hover {
+            color: #00a8ff;
+            text-decoration: underline;
+        }
+
+        .comment-date {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .comment-content {
+            color: #cccccc;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .comment-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .dynamic_content_post {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        /* Ensure the no content message is centered and styled properly */
+        .noContent_message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+        }
+
+        .noContent_message img {
+            max-width: 200px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            opacity: 0.7;
+        }
+
+        .noContent_message p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        /* Active tab highlighting */
+        .profile_overview_buttons button.active {
+            color: #0079d3;
+            border-bottom-color: #0079d3;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .post-community {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .community-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: #2a2a2a;
+        }
+
+        .vote-count svg {
+            transition: fill 0.2s ease;
+        }
+        
+        .vote-count span {
+            transition: color 0.2s ease;
+        }
+
+        .vote-count.liked svg {
+            fill: #0079d3;
+            transform: scale(1.1);
+        }
+        
+        /* Add style for filled upvote icon */
+        .vote-count.liked svg polyline {
+            fill: #0079d3;
+            stroke: #0079d3;
+        }
+        
+        .vote-count.liked span {
+            color: #0079d3;
+            font-weight: 500;
+        }
+        
+        .vote-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        
+        .vote-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .vote-button:hover .vote-count svg {
+            fill: #0079d3;
+            transform: scale(1.1);
+        }
+        
+        .vote-button:hover .vote-count span {
+            color: #0079d3;
+        }
     </style>
-</head>
-<body>
-<div class="container">
-		<div class="main-body">
-			<div class="row">
-				<div class="col-lg-4">
-					<div class="card">
-						<div class="card-body">
-							<div class="d-flex flex-column align-items-center text-center">
-								<img src="<%= image %>" alt="Admin" class="rounded-circle p-1 bg-primary" width="110">
-								<div class="mt-3">
-									<h4>John Doe </h4>
-									<p class="text-secondary mb-1">Full Stack Developer</p>
-									<p class="text-muted font-size-sm">Bay Area, San Francisco, CA</p>
-									<button class="btn btn-primary">Follow</button>
-									<form method="post" action="/profile/upload" enctype="multipart/form-data">
-										<input type="file" name="profilePicture" class="btn btn-outline-primary">
-										<button type="submit" class="btn btn-primary">upload</button>
-									</form>
-								</div>
-							</div>
-							<hr class="my-4">
-							<ul class="list-group list-group-flush">
-								<li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-									<h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-globe me-2 icon-inline"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>Website</h6>
-									<span class="text-secondary">https://bootdey.com</span>
-								</li>
-								<li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-									<h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github me-2 icon-inline"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>Github</h6>
-									<span class="text-secondary">bootdey</span>
-								</li>
-								<li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-									<h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter me-2 icon-inline text-info"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>Twitter</h6>
-									<span class="text-secondary">@bootdey</span>
-								</li>
-								<li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-									<h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-instagram me-2 icon-inline text-danger"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>Instagram</h6>
-									<span class="text-secondary">bootdey</span>
-								</li>
-								<li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-									<h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-facebook me-2 icon-inline text-primary"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>Facebook</h6>
-									<span class="text-secondary">bootdey</span>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-8">
-					<div class="card">
-						<div class="card-body">
-							<div class="row mb-3">
-								<div class="col-sm-3">
-									<h6 class="mb-0">Full Name</h6>
-								</div>
-								<div class="col-sm-9 text-secondary">
-									<input type="text" class="form-control" value="John Doe">
-								</div>
-							</div>
-							<div class="row mb-3">
-								<div class="col-sm-3">
-									<h6 class="mb-0">Email</h6>
-								</div>
-								<div class="col-sm-9 text-secondary">
-									<input type="text" class="form-control" value="john@example.com">
-								</div>
-							</div>
-							<div class="row mb-3">
-								<div class="col-sm-3">
-									<h6 class="mb-0">Phone</h6>
-								</div>
-								<div class="col-sm-9 text-secondary">
-									<input type="text" class="form-control" value="(239) 816-9029">
-								</div>
-							</div>
-							<div class="row mb-3">
-								<div class="col-sm-3">
-									<h6 class="mb-0">Mobile</h6>
-								</div>
-								<div class="col-sm-9 text-secondary">
-									<input type="text" class="form-control" value="(320) 380-4539">
-								</div>
-							</div>
-							<div class="row mb-3">
-								<div class="col-sm-3">
-									<h6 class="mb-0">Address</h6>
-								</div>
-								<div class="col-sm-9 text-secondary">
-									<input type="text" class="form-control" value="Bay Area, San Francisco, CA">
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-3"></div>
-								<div class="col-sm-9 text-secondary">
-									<input type="button" class="btn btn-primary px-4" value="Save Changes">
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-12">
-							<div class="card">
-								<div class="card-body">
-									<h5 class="d-flex align-items-center mb-3">Project Status</h5>
-									<p>Web Design</p>
-									<div class="progress mb-3" style="height: 5px">
-										<div class="progress-bar bg-primary" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-									</div>
-									<p>Website Markup</p>
-									<div class="progress mb-3" style="height: 5px">
-										<div class="progress-bar bg-danger" role="progressbar" style="width: 72%" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
-									</div>
-									<p>One Page</p>
-									<div class="progress mb-3" style="height: 5px">
-										<div class="progress-bar bg-success" role="progressbar" style="width: 89%" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
-									</div>
-									<p>Mobile Template</p>
-									<div class="progress mb-3" style="height: 5px">
-										<div class="progress-bar bg-warning" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-									</div>
-									<p>Backend API</p>
-									<div class="progress" style="height: 5px">
-										<div class="progress-bar bg-info" role="progressbar" style="width: 66%" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
-<script type="text/javascript">
-	
+  </head>
+
+  <body>
+    <div class="binnit-header">
+
+        <div class="header-left">
+            <div class="binnit-ico">
+                <img src="svg_icons/512px-removebg-preview.png">
+            </div>
+            
+            <button onclick="window.location.href='Login/sign_in.html'">
+                Sign Up
+            </button>
+             <button onclick="window.location.href='Login/login_in.html'">
+                Log In
+            </button>
+        </div>
+
+       <div class="middleLogo">
+            <svg width="400" height="100" viewBox="-12 -6 24 12" xmlns="http://www.w3.org/2000/svg">
+                <path d="M -9 -4.8 H -4.2 V 0 H -9 V -4.8 M -8.4336 -0.5409 H -5.2786 V -1.0487 H -4.7365 V -2.6521 H -5.2975 V -3.1676 H -7.4051 V -4.2177 H -8.4431 V -0.5364 M -7.3864 -1.5793 H -5.8119 V -2.1021 H -7.3894 V -1.5793 M -3.7074 -0.5452 V -3.1672 H -2.6567 V -0.5452 H -3.7074 M -1.5965 -0.5453 H -0.5478 V -2.6427 H 0.5071 V -0.5391 H 1.5433 V -3.1621 H 1.0262 V -3.6849 H -1.6005 V -0.5454 M 2.6256 -0.542 H 3.6681 V -2.6508 H 4.7341 V -0.5331 H 5.7714 V -3.1621 H 5.2427 V -3.6879 H 2.6254 V -0.5409 M 6.2967 -3.1617 H 7.355 V -0.5388 H 6.2957 V -3.1657 M 8.9591 -4.7181 H 9.9826 V -3.6773 H 11.0343 V -2.6393 H 9.9933 V -1.574 H 11.0324 V -0.5426 H 9.4762 V -1.0647 H 8.9552 V -2.6537 H 8.3907 V -3.6758 H 8.954 V -4.7183 M 6.3824 -3.2754 H 6.6016 V -3.3839 H 6.7105 V -3.4897 H 6.8187 V -3.6 H 7.4687 V -3.7106 H 7.5748 V -3.8148 H 7.6866 V -3.9218 H 7.791 V -4.579 H 7.6865 V -4.6843 H 7.5762 V -4.7946 H 6.276 V -4.6842 H 6.1647 V -4.5763 H 6.0594 V -3.9283 H 6.1659 V -3.7072 H 6.2737 V -3.5993 H 6.3827 V -3.2757 M 6.3783 -4.2502 H 7.0338 V -4.1348 H 6.3758 V -4.2502 M 6.3798 -4.4627 H 7.2535 V -4.3548 H 6.3809 V -4.4616 M -3.5263 -3.3709 H -2.8234 V -3.4703 H -2.726 V -3.5667 H -2.6204 V -3.6723 H -2.5198 V -4.376 H -2.622 V -4.4763 H -2.7273 V -4.5768 H -2.8239 V -4.6757 V -4.6757 H -3.5259 V -4.5754 H -3.6292 V -4.4764 H -3.7298 V -4.3765 H -3.8282 V -3.6672 H -3.7277 V -3.567 H -3.6275 V -3.4677 H -3.5273 V -3.37 M -3.7258 -4.274 H -3.6279 V -4.376 H -3.5259 V -4.4711 H -3.4266 V -4.5732 H -2.9247 V -4.4683 H -2.824 V -4.3677 H -2.7247 V -4.2712 H -2.6269 V -3.7679 H -2.8226 V -3.8685 H -3.5231 V -3.7693 H -3.7258 V -4.274 M -3.527 -3.6707 H -3.4243 V -3.7726 H -2.9242 V -3.6647 H -2.8257 V -3.5722 H -2.9233 V -3.472 H -3.4251 V -3.5705 H -3.527 V -3.6698 M -3.3267 -4.4724 V -4.373 H -3.4277 V -4.071 H -3.3283 V -3.9666 H -3.0245 V -4.0678 H -2.921 V -4.3742 H -3.0241 V -4.4724 H -3.3271 M -3.2203 -4.3701 H -3.1273 V -4.2704 H -3.0248 V -4.1722 H -3.1274 V -4.075 H -3.2218 V -4.1727 H -3.3223 V -4.2702 H -3.2203 V -4.3708" fill="white" stroke="wihite" stroke-width="0"/>
+            </svg>
+            
+        </div>
+
+       
+   
+
+        <div class="right">
+           <div class="search-bar">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M788.38-127.85 535.92-380.31q-30 24.54-73.5 38.04t-83.88 13.5q-106.1 0-179.67-73.53-73.56-73.53-73.56-179.57 0-106.05 73.53-179.71 73.53-73.65 179.57-73.65 106.05 0 179.71 73.56Q631.77-688.1 631.77-582q0 42.69-13.27 83.69t-37.27 70.69l253.46 253.47-46.31 46.3ZM378.54-394.77q79.61 0 133.42-53.81 53.81-53.8 53.81-133.42 0-79.62-53.81-133.42-53.81-53.81-133.42-53.81-79.62 0-133.42 53.81-53.81 53.8-53.81 133.42 0 79.62 53.81 133.42 53.8 53.81 133.42 53.81Z"/></svg>
+                <input type="search" class="search-bar-style" placeholder="Discover here..">
+           </div>
+        </div>
+
+
+
+    </div>
+
+    <div class="binnit-sidebar">
+      <div class="space-for-scroll-window"></div>
+
+        <nav id="sidebar">
+            <ul>
+            <li id="active">
+
+                <div class="list-style">            
+                    <a href="/">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M156-114v-487l324-242.77L804-601v487H566.15v-293.69h-172.3V-114H156Z"/></svg>
+                    <span>Home</span>
+                </a>
+                </div>
+
+
+
+            </li>
+
+            <li>
+                <div class="list-style">
+                    <a href="/profile">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M234-276q51-39 114-59.5T480-356q71 0 134 20.5T728-276q35-41 53.5-93T800-480q0-133-93.5-226.5T480-800 253.5-706.5 160-480q0 59 19 111t53 93Zm246-164q-70 0-120-50t-50-120q0-70 50-120t120-50q70 0 120 50t50 120q0 70-50 120t-120 50Zm0 80q83 0 156-31.5T828-276q-31-36-104-67.5T568-375q-83 0-156 31.5T308-276q31 36 104 67.5T568-177Zm0-240q45 0 77.5-32.5T678-527q0-45-32.5-77.5T568-637q-45 0-77.5 32.5T458-527q0 45 32.5 77.5T568-417Zm0-180Zm0 360Z"/></svg>
+                    <span>Profile</span>
+                    </a>
+                </div>
+            </li>
+            <hr>
+
+            <li>
+                <button onclick=toggleSubMenu(this) class="dropdown-button">
+                    
+                    <span style="color:#929292; font-size: 16px;">Communities</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m480-555.69-184 184L267.69-400 480-612.31 692.31-400 664-371.69l-184-184Z"/></svg>
+                </button>
+                <ul class="sub-menu show">
+                    <div>
+                        <li>
+                            <a href="#">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M454-290h54v-162h162v-54H508v-164h-54v164H290v54h164v162Zm26.17 190q-78.81 0-148.21-29.91T211.23-211.1q-51.34-51.28-81.28-120.59Q100-401.01 100-479.83q0-79.07 29.97-148.69t81.35-121.13q51.38-51.5 120.59-80.92Q401.13-860 479.83-860q79.06 0 148.67 29.39 69.62 29.39 121.13 80.85 51.52 51.46 80.94 121.02Q860-559.18 860-480.09t-29.39 148.15q-29.39 69.06-80.84 120.49-51.44 51.44-120.98 81.45-69.55 30-148.62 30Z"/></svg>
+                                <span>Create Community</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M640-239q-33.78 0-63.39-10T523-278q39-47 62.5-97.78t23.5-104.5q0-53.72-23.5-104.22T523-682q24-19 53.61-29T640-721q100.43 0 170.72 70.28Q881-580.43 881-480q0 100.43-70.28 170.72Q740.43-239 640-239Zm-160-64q-37-32-59-77.5T399-480q0-54 22-99.5t59-77.5q37 32 59 77.5t22 99.5q0 54-22 99.5T480-303Zm-160 64q-100.43 0-170.72-70.28Q79-379.57 79-480q0-100.43 70.28-170.72Q219.57-721 320-721q33.78 0 63.39 10T437-682q-39 47-62.5 97.65Q351-533.7 351-480.12 351-420 373.5-368q22.5 52 60.5 91-23.12 18.74-52.37 28.37Q352.38-239 320-239Z"/></svg>
+                                <span>Join Community</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/community">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-84q-82 0-154-31.5t-125.5-85Q147-254 115.5-326T84-480q0-82 31.5-154t85-125.5Q254-813 326-844.5T480-876q154 0 265.5 102T873-522h-54q-10-94-66-169T608-800v19q0 35-25.5 60.5T522-695h-84v86q0 17-12.5 29.5T396-567h-88v86h61v128h-18L146-558q-3 20-5.5 39t-2.5 39q0 141 99 241.5T480-137v53Zm356-41L696-263q-17 14-36.5 19t-39.5 5q-60 0-100.5-40.5T479-380q0-60 40.5-100.5T620-521q60 0 100.5 40.5T761-380q0 21-5.5 41.5T735-301l140 137-39 39ZM620-293q36 0 61.5-25.5T707-380q0-36-25.5-61.5T620-467q-36 0-61.5 25.5T533-380q0 36 25.5 61.5T620-293Z"/></svg>
+                                <span>Explore Communities</span>
+                            </a>
+                        </li>
+                    </div>
+                </ul>
+            </li>
+
+            <hr>
+
+            <li>
+                <button onclick=toggleSubMenu(this) class="dropdown-button">
+                    <span style="color:#929292; font-size: 16px;">More</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m480-555.69-184 184L267.69-400 480-612.31 692.31-400 664-371.69l-184-184Z"/></svg>
+                </button>
+                <ul class="sub-menu show">
+                    <div>
+                        <li>
+                            <a href="#">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M454-290h54v-230h-54v230Zm25.82-296q12.68 0 21.43-8.57 8.75-8.58 8.75-21.25 0-12.68-8.57-21.43-8.58-8.75-21.25-8.75-12.68 0-21.43 8.57-8.75 8.58-8.75 21.25 0 12.68 8.57 21.43 8.58 8.75 21.25 8.75Zm.35 486q-78.81 0-148.21-29.91T211.23-211.1q-51.34-51.28-81.28-120.59Q100-401.01 100-479.83q0-79.07 29.97-148.69t81.35-121.13q51.38-51.5 120.59-80.92Q401.13-860 479.83-860q79.06 0 148.67 29.39 69.62 29.39 121.13 80.85 51.52 51.46 80.94 121.02Q860-559.18 860-480.09t-29.39 148.15q-29.39 69.06-80.84 120.49-51.44 51.44-120.98 81.45-69.55 30-148.62 30Zm-.17-54q136.51 0 231.26-94.74Q806-343.49 806-480t-94.74-231.26Q616.51-806 480-806t-231.26 94.74Q154-616.51 154-480t94.74 231.26Q343.49-154 480-154Zm0-326Z"/></svg>
+                                <span>About Us</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M481.92-258q15.08 0 25.58-10.42 10.5-10.41 10.5-25.5 0-15.08-10.42-25.58-10.41-10.5-25.5-10.5-15.08 0-25.58 10.42-10.5 10.41-10.5 25.5 0 15.08 10.42 25.58 10.41 10.5 25.5 10.5ZM454-398h52q2-28.65 9.5-46.82Q523-463 552-492q27-25 40.5-47.92t13.5-52.64q0-50.44-36.25-79.94Q533.51-702 484-702q-48 0-81 25.5T356-616l48 20q8-22 25-40t53-18q38 0 56 21t18 45q0 21-12 37t-30 33q-38 35-49 58t-11 62Zm26.17 298q-78.81 0-148.21-29.91T211.23-211.1q-51.34-51.28-81.28-120.59Q100-401.01 100-479.83q0-79.07 29.97-148.69t81.35-121.13q51.38-51.5 120.59-80.92Q401.13-860 479.83-860q79.06 0 148.67 29.39 69.62 29.39 121.13 80.85 51.52 51.46 80.94 121.02Q860-559.18 860-480.09t-29.39 148.15q-29.39 69.06-80.84 120.49-51.44 51.44-120.98 81.45-69.55 30-148.62 30Zm-.17-54q136.51 0 231.26-94.74Q806-343.49 806-480t-94.74-231.26Q616.51-806 480-806t-231.26 94.74Q154-616.51 154-480t94.74 231.26Q343.49-154 480-154Zm0-326Z"/></svg>
+                                <span>Help</span>
+                            </a>
+                        </li>
+                    </div>
+                </ul>
+            </li>
+
+            </ul>
+        </nav>
+    
+    </div>
+
+    <div class="profile">
+        <div class="profile_name">
+            <div class="profile_pic">
+                <img src="<%= image %>" alt="Profile Picture" > 
+            </div>
+            <div class="name_div">
+            <h3> 
+                <%= user.name %>
+            </h3>
+            
+            <span class="tooltip" data-tooltip="Edit Profile">
+                <a href="profileEdit.html">
+                    <button class="profile_edit_button" title="Edit profile">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M192.15-192.39h45.91l432.11-431.28-45.59-45.84-432.43 431.94v45.18Zm-35.8 72.42q-15.34 0-25.86-10.52t-10.52-25.86v-80.86q0-14.44 5.75-28.1 5.75-13.65 15.96-23.79l531.81-531.55q8.96-8.84 21.03-13.86 12.07-5.01 25.26-5.01 12.45 0 24.7 4.99 12.26 4.99 22.72 13.97l54.36 53.81q9.32 9.88 14.01 22.14 4.7 12.26 4.7 24.67 0 13.27-4.76 25.48-4.75 12.2-13.95 21.47L289.58-141.68q-10.26 10.21-23.78 15.96-13.53 5.75-28.17 5.75h-81.28Zm608.68-600.41-43.74-43.98 43.74 43.98Zm-117.62 73.63-22.83-22.76 45.59 45.84-22.76-23.08Z"/></svg>
+                </button>
+                </a>
+            </span>
+            </div>
+            </div>
+
+            <div class="profile_post_section">
+                    <div class="profile_overview_buttons">
+                    <button id="postsBtn" class="active" onclick="switchProfileTab('POSTS')">Posts</button>
+                    	<button id="likePostBtn" onclick="switchProfileTab('LIKES')">Like</button>
+                    <button id="commentsBtn" onclick="switchProfileTab('COMMENTS')">Comments</button>
+                    </div>
+                    
+
+                    <a href="createPost.html">
+                         <button id="createBtn" class="active" onclick="switchProfileTab('POSTS')">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M463.08-463.58h-200q-7.2 0-12.06-4.73-4.87-4.73-4.87-12.11 0-7.39 4.87-12.2 4.86-4.8 12.06-4.8h200v-200q0-7.2 4.89-12.06 4.88-4.87 12.11-4.87 7.23 0 12.04 4.87 4.8 4.86 4.8 12.06v200h200q7.2 0 12.06 4.9 4.87 4.89 4.87 12.13 0 7.58-4.87 12.2-4.86 4.61-12.06 4.61h-200v200q0 7.53-4.89 12.23-4.88 4.7-12.11 4.7-7.23 0-12.04-4.7-4.8-4.7-4.8-12.23v-200Z"/></svg>
+                        </button>
+                    </a>
+
+                    <hr class="profile_hr">
+
+                    <div id="postsContent" class="profile-tab content_page">
+                        <% if (userPosts && userPosts.length > 0) { %>
+                            <div class="dynamic_content_post">
+                                <% userPosts.forEach(post => { %>
+                                    <div class="post-card">
+                                        <div class="post-header">
+                                            <div class="post-community">
+                                                <img src="<%= post.communityImage || '/default-community.png' %>" alt="Community icon" class="community-icon">
+                                                <a href="/community/<%= post.communityName %>">b/<%= post.communityName %></a>
+                                            </div>
+                                            <div class="post-date">
+                                                <%= new Date(post.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="post-content">
+                                            <h3 class="post-title"><a href="/comments/<%= post.community_id %>/<%= post._id %>"><%= post.title %></a></h3>
+                                            
+                                            <% if (post.path) { %>
+                                                <div class="post-media">
+                                                    <img src="<%= post.path %>" alt="Post image">
+                                                </div>
+                                                <% if (post.caption) { %>
+                                                    <p class="post-text"><%= post.caption %></p>
+                                                <% } %>
+                                            <% } else if (post.postText) { %>
+                                                <p class="post-text"><%= post.postText %></p>
+                                            <% } %>
+                                        </div>
+                                        
+                                        <div class="post-footer">
+                                            <div class="post-stats">
+                                                <div class="vote-container">
+                                                    <a href="/upvote/<%= post.community %>/<%= post._id %>" class="vote-button">
+                                                        <div class="vote-count <%= post.isLiked ? 'liked' : '' %>">
+                                                            <% if(post.isLiked) { %>
+                                                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                                            <% } else { %>
+                                                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                                            <% } %>
+                                                            <span><%= post.upvote %></span>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <div class="comment-count">
+                                                    <a href="/comments/0/<%= post.community_id %>/<%= post._id %>" class="vote-button">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"><path d="M80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z"/></svg>
+                                                        <span><%= post.commentCount || 0 %> comments</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="post-actions">
+                                                <a href="/comments/0/<%= post.community_id %>/<%= post._id %>" class="view-btn">View Post</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% } else { %>
+                            <div class="noContent_message">
+                                <img src="/Uploads/WhatsApp Image 2025-04-07 at 12.03.05_f39ff063.jpg">
+                                <p>Nothing to see here? Why don't you start posting something amazing.</p>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <div id="likesContent" class="profile-tab content_page hidden">
+                        <% if (likedPosts && likedPosts.length > 0) { %>
+                            <div class="dynamic_content_post">
+                                <% likedPosts.forEach(post => { %>
+                                    <div class="post-card">
+                                        <div class="post-header">
+                                            <div class="post-community">
+                                                <img src="<%= post.communityImage || '/default-community.png' %>" alt="Community icon" class="community-icon">
+                                                <a href="/community/<%= post.communityName %>">b/<%= post.communityName %></a>
+                                            </div>
+                                            <div class="post-date">
+                                                <%= new Date(post.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="post-content">
+                                            <h3 class="post-title"><a href="/comments/0/<%= post.community_id %>/<%= post._id %>"><%= post.title %></a></h3>
+                                            
+                                            <% if (post.path) { %>
+                                                <div class="post-media">
+                                                    <img src="<%= post.path %>" alt="Post image">
+                                                </div>
+                                                <% if (post.caption) { %>
+                                                    <p class="post-text"><%= post.caption %></p>
+                                                <% } %>
+                                            <% } else if (post.postText) { %>
+                                                <p class="post-text"><%= post.postText %></p>
+                                            <% } %>
+                                        </div>
+                                        
+                                        <div class="post-footer">
+                                            <div class="post-stats">
+                                                <div class="vote-container">
+                                                    <a href="/upvote/<%= post.community %>/<%= post._id %>" class="vote-button">
+                                                        <div class="vote-count <%= post.isLiked ? 'liked' : '' %>">
+                                                            <% if(post.isLiked) { %>
+                                                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                                            <% } else { %>
+                                                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                                            <% } %>
+                                                            <span><%= post.upVote %></span>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <div class="comment-count">
+                                                    <a href="/comments/0/<%= post.community_id %>/<%= post._id %>" class="vote-button">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"><path d="M80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z"/></svg>
+                                                        <span><%= post.commentCount || 0 %> comments</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="post-actions">
+                                                <a href="/comments/0/<%= post.community_id %>/<%= post._id %>" class="view-btn">View Post</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% } else { %>
+                            <div class="noContent_message">
+                                <img src="/Uploads/WhatsApp Image 2025-04-07 at 12.03.05_f39ff063.jpg">
+                                <p>You haven't liked any posts yet. Start exploring communities to find content you enjoy!</p>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <div id="commentsContent" class="profile-tab content_page hidden">
+                        <% if (userComments && userComments.length > 0) { %>
+                            <div class="dynamic_content_post">
+                                <% userComments.forEach(comment => { %>
+                                    <div class="comment-card">
+                                        <div class="comment-header">
+                                            <div class="comment-post-info">
+                                                <span>On post: </span>
+                                                <a href="/comments/<%= comment.community_id %>/<%= comment.post_id %>"><%= comment.postTitle %></a>
+                                            </div>
+                                            <div class="comment-date">
+                                                <%= new Date(comment.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                                            </div>
+                                        </div>
+                                        <div class="comment-content">
+                                            <p><%= comment.comment_text %></p>
+                                        </div>
+                                        <div class="comment-footer">
+                                            <div class="comment-stats">
+                                                <div class="vote-count">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"><path d="M426.61-324.27v-311.04h80.41v311.04h-80.41Zm53.73 180.38q-83.03 0-156.54-31.61-73.51-31.61-128.07-86.16-54.55-54.56-86.16-128.04-31.61-73.49-31.61-156.63 0-83.15 31.61-156.54 31.61-73.4 86.16-127.77 54.56-54.38 128.04-86.16 73.49-31.78 156.63-31.78 83.15 0 156.54 31.78 73.4 31.78 127.77 86.16 54.38 54.37 86.16 127.77 31.78 73.39 31.78 156.54 0 83.14-31.78 156.63-31.78 73.48-86.16 128.04-54.37 54.55-127.77 86.16-73.39 31.61-156.54 31.61Z"/></svg>
+                                                    <span><%= comment.upVotes || 0 %> votes</span>
+                                                </div>
+                                            </div>
+                                            <div class="comment-actions">
+                                                <a href="/comments/<%= comment.community_id %>/<%= comment.post_id %>" class="view-btn">View Thread</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% } else { %>
+                                <div class="noContent_message">
+                                    <img src="svg_icons/DALL·E 2025-04-05 23.39.41 - A 2D pixel art character in a small, mini-figure size, standing in a thinking or wondering pose. The character is humanoid, with a large head and smal.png">
+                                        <p>No comments yet. Be the first to comment!</p>
+                                    </div>
+                            <% } %>
+            </div>
+
+        </div>
+    </div>
+    
+<script>
+    function switchProfileTab(type) {
+  document.getElementById("postsBtn").classList.remove("active");
+        document.getElementById("likePostBtn").classList.remove("active");
+  document.getElementById("commentsBtn").classList.remove("active");
+  document.getElementById("createBtn").classList.add("hidden");
+
+  document.getElementById("postsContent").classList.add("hidden");
+        document.getElementById("likesContent").classList.add("hidden");
+  document.getElementById("commentsContent").classList.add("hidden");
+
+  if (type === "POSTS") {
+    document.getElementById("postsBtn").classList.add("active");
+    document.getElementById("postsContent").classList.remove("hidden");
+    document.getElementById("createBtn").classList.remove("hidden");
+        } else if (type === "LIKES") {
+            document.getElementById("likePostBtn").classList.add("active");
+            document.getElementById("likesContent").classList.remove("hidden");
+        } else if (type === "COMMENTS") {
+    document.getElementById("commentsBtn").classList.add("active");
+    document.getElementById("commentsContent").classList.remove("hidden");
+  }
+}
+
+function checkContent() {
+    const contentDiv = document.querySelector('.dynamic_content_post');
+    const noContentMsg = document.querySelector('.no-content-message');
+    
+        if (contentDiv && noContentMsg && contentDiv.innerHTML.trim() === '') {
+        noContentMsg.style.display = 'flex';
+        } else if (noContentMsg) {
+        noContentMsg.style.display = 'none';
+    }
+}
+
+checkContent();
 </script>
-</body>
+  </body>
 </html>
+

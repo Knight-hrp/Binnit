@@ -1,7 +1,10 @@
 const USER = require('../models/user');
 const {setUser} = require('../service/auth');
+const UPVOTE = require('../models/upVote');
+const POST = require('../models/post');
 
-async function DirectSignUpPage(req,res){
+async function DirectSignUpPage(req,res)
+{
     return res.render("signup");
 }
 
@@ -66,10 +69,60 @@ async function ChangeRole(id,role)
     await USER.findOneAndUpdate({_id: id},{role:role});
 }
 
+const getUserDetail = async (req, res) => {
+    try {
+        // ... existing code ...
+        
+        // Get the current user's upvoted posts to check against displayed posts
+        const likedPosts = await UPVOTE.find({ user: req.user?._id }).lean();
+        const likedPostsSet = new Set(likedPosts.map(like => like.post.toString()));
+        
+        // Add isLiked property to each post
+        const userPosts = await POST.find({ user: user._id })
+            .sort({ createdAt: -1 })
+            .lean();
+            
+        userPosts.forEach(post => {
+            post.isLiked = likedPostsSet.has(post._id.toString());
+        });
+        
+        // Add isLiked property to saved posts
+        const savedPosts = await POST.find({ _id: { $in: user.saved } })
+            .sort({ createdAt: -1 })
+            .lean();
+            
+        savedPosts.forEach(post => {
+            post.isLiked = likedPostsSet.has(post._id.toString());
+        });
+        
+        // Add isLiked property to liked posts
+        const userLikedPosts = await POST.find({ _id: { $in: likedPosts.map(like => like.post) } })
+            .sort({ createdAt: -1 })
+            .lean();
+            
+        userLikedPosts.forEach(post => {
+            post.isLiked = true; // These are definitely liked
+        });
+        
+        // ... existing code ...
+        
+        res.render("userProfile", { 
+            user: user,
+            posts: userPosts,
+            saved: savedPosts,
+            liked: userLikedPosts,
+            // ... existing code ...
+        });
+    } catch (error) {
+        // ... existing code ...
+    }
+};
+
 module.exports = {
     DirectSignUpPage,
     DirectLoginPage,
     CreateAccount,
     LoginAccount,
     ChangeRole,
+    getUserDetail,
 }

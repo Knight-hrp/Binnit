@@ -10,6 +10,34 @@
     <link rel="stylesheet" href="/homepage_Styles.css">
     <link rel="stylesheet" href="/scrollbar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        .icon-box.liked {
+            color: #0079d3;
+            font-weight: bold;
+        }
+        
+        .icon-box.liked .fa-arrow-up,
+        .icon-box.liked .vote-count {
+            color: #0079d3;
+        }
+        
+        .fa-solid.fa-arrow-up {
+            font-weight: 900;
+        }
+        
+        .icon-box {
+            transition: all 0.2s ease;
+        }
+        
+        .icon-box:hover {
+            color: #0079d3;
+            transform: translateY(-2px);
+        }
+        
+        .icon-box:hover .fa-arrow-up {
+            transform: scale(1.1);
+        }
+    </style>
   </head>       
 
   <body>
@@ -35,15 +63,6 @@
             
         </div>
 
-       
-   
-
-        <div class="right">
-           <div class="search-bar">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M788.38-127.85 535.92-380.31q-30 24.54-73.5 38.04t-83.88 13.5q-106.1 0-179.67-73.53-73.56-73.53-73.56-179.57 0-106.05 73.53-179.71 73.53-73.65 179.57-73.65 106.05 0 179.71 73.56Q631.77-688.1 631.77-582q0 42.69-13.27 83.69t-37.27 70.69l253.46 253.47-46.31 46.3ZM378.54-394.77q79.61 0 133.42-53.81 53.81-53.8 53.81-133.42 0-79.62-53.81-133.42-53.81-53.81-133.42-53.81-79.62 0-133.42 53.81-53.81 53.8-53.81 133.42 0 79.62 53.81 133.42 53.8 53.81 133.42 53.81Z"/></svg>
-                <input type="search" class="search-bar-style" placeholder="Discover here..">
-           </div>
-        </div>
 
 
 
@@ -215,10 +234,25 @@
     <br>
             <div class="post-footer">
                 <div class="footer-icons">
-                    <button onclick="window.location.href='/upvote/<%=post._id%>'" class="icon-box">
-                        <i class="fas fa-arrow-up"></i>
+
+                    <%
+                        let isLiked = false;
+                        upvotes.forEach(upvote=>{
+                            if(post._id.toString() === upvote.post_id.toString()){
+                                isLiked = true;
+                            }
+                        });
+                    %>
+                    
+                    <button onclick="window.location.href='/upvote/<%=post._id%>'" class="icon-box <%= isLiked ? 'liked' : '' %>">
+                        <% if (isLiked) { %>
+                            <i class="fas fa-arrow-up fa-solid"></i>
+                        <% } else { %>
+                            <i class="fas fa-arrow-up"></i>
+                        <% } %>
                         <span class="vote-count"><%=post.upVote%></span>
                     </button>
+                    
                     <button class="icon-box downvote">
                         <i class="fas fa-arrow-down"></i>
                     </button>

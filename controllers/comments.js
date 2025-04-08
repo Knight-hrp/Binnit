@@ -3,10 +3,10 @@ const Comment = require('../models/comments');
 const USER = require('../models/user');
 const Community = require('../models/community');
 const UserProfile = require('../models/userProfilePicture');
+const UpVote = require('../models/upVote');
 
-async function getCommentsByPost(curr_user, community, postId,flag, res) {
+async function getCommentsByPost(curr_user, community, postId, flag, res) {
     try {
-        
         // Find post by ID
         const post = await Post.findById(postId);
         if (!post) {
@@ -45,31 +45,36 @@ async function getCommentsByPost(curr_user, community, postId,flag, res) {
             });
         }
         
-        console.log(curr_user);
+        // Check if the current user has liked this post
+        let isLiked = false;
+        if (curr_user) {
+            const upvote = await UpVote.findOne({ post_id: postId, user_id: curr_user });
+            isLiked = !!upvote;
+        }
+        
         // Get comments for this post
-         const comments = await Comment.find({ post_id: postId })
+        const comments = await Comment.find({ post_id: postId });
         const curr_profile = await UserProfile.findOne({ user_id: curr_user });
-
         const userComment = await USER.find({});
         const userProfileComments = await UserProfile.find({});
-
-        // Render the comments page with all necessary data
-        return res.render('comments', {
-            userProfile: userProfile || { picture_name: '/default-profile.png' },
-            user: user,
+        
+        res.render('comments', {
             post: post,
-            community: communityData,
-            comments: comments || [],
+            comments: comments,
+            user: user,
+            userProfile: userProfile,
+            curr_user: curr_user,
             curr_profile: curr_profile,
+            community: communityData,
+            flag: flag,
             userComment: userComment,
             userProfileComments: userProfileComments,
-            flag:flag,
+            isLiked: isLiked
         });
-
     } catch (error) {
-        console.error('Error fetching comments:', error);
-        return res.status(500).render('error', { 
-            message: 'Error loading comments',
+        console.error('Error fetching comments by post:', error);
+        res.status(500).render('error', {
+            message: 'Error fetching comments',
             error: { status: 500 }
         });
     }
@@ -122,7 +127,7 @@ async function createComment(req, res) {
         });
 
         // Redirect back to the comments page with community and post ID
-        res.redirect(`/comments/${community}/${postId}`);
+        res.redirect(`/comments/1/${community}/${postId}`);
     } catch (error) {
         console.error('Error creating comment:', error);
         res.status(500).render('error', { 

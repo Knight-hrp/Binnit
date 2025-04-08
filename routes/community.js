@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 
-const { createCommunity, getCommunity,joinCommunity, exploreCommunity, renderCreatePost, renderCreatePostFile, renderAssignModerator } = require('../controllers/community');
+const { createCommunity, getCommunity,joinCommunity, exploreCommunity, renderCreatePost, renderCreatePostFile, renderAssignModerator, searchCommunity } = require('../controllers/community');
 
 const router = express.Router();
 
@@ -13,6 +13,7 @@ const USERPROFILE = require('../models/userProfilePicture');
 const COMMUNTIYROLE = require('../models/communityRole');
 const path = require('path');
 const {} = require('../socketHandler')
+const UPVOTE = require('../models/upVote');
 
 
 
@@ -36,6 +37,8 @@ router.get("/addCommunity",(req,res)=>{
     res.render("addCommunity");
 });
 
+router.post("/search",searchCommunity);
+
 router.get("/join/:community",joinCommunity);
 
 router.post("/addCommunity",upload.single("image"),async (req,res)=>{
@@ -53,6 +56,10 @@ router.post("/addCommunity",upload.single("image"),async (req,res)=>{
         user_id: req.user._id,
         community_id: community._id,
         role: 'admin'
+    });
+    await JOINCOMMUNITY.create({
+        communityID: community._id,
+        userID: req.user._id
     });
     return res.redirect("/community");
 });
@@ -75,6 +82,9 @@ router.get('/:community',async (req,res)=>{
         // Get community roles (for checking moderators)
         let communityRoles = [];
         
+        // Get user's liked posts
+        let likedPostsSet = new Set();
+        
         if (req.user) {
             // Check for admin role
             const adminRole = await COMMUNTIYROLE.findOne({
@@ -89,7 +99,18 @@ router.get('/:community',async (req,res)=>{
                 community_id: community._id,
                 role: { $in: ['admin', 'moderator'] }
             });
+            
+            // Get liked posts
+            const likedPostIds = await UPVOTE.find({ user_id: req.user._id }).select('post_id');
+            likedPostsSet = new Set(likedPostIds.map(upvote => upvote.post_id.toString()));
+            
+            // Add isLiked flag to each post
+            communityPost.forEach(post => {
+                post.isLiked = likedPostsSet.has(post._id.toString());
+            });
         }
+
+        const upVote = await UPVOTE.find({user_id: req.user._id});
         
         res.render("insideCommunity",{
             Community: req.params.community,
@@ -99,7 +120,8 @@ router.get('/:community',async (req,res)=>{
             community: community,
             isAdmin: isAdmin,
             communityRoles: communityRoles,
-            req: req
+            req: req,
+            upvotes: upVote,
         });
     } catch (error) {
         console.error("Error:", error);
