@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {setUpVote} = require("../controllers/home");
+const { setUpVote } = require("../controllers/home");
 
 router.get('/:post_id',async (req,res)=>
 {

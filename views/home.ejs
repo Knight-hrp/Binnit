@@ -70,7 +70,6 @@
 
     <div class="binnit-sidebar">
       <div class="space-for-scroll-window"></div>
-
         <nav id="sidebar">
             <ul>
             <li id="active">
@@ -237,11 +236,13 @@
 
                     <%
                         let isLiked = false;
+                        if(locals.upvotes){
                         upvotes.forEach(upvote=>{
                             if(post._id.toString() === upvote.post_id.toString()){
                                 isLiked = true;
                             }
                         });
+                        }
                     %>
                     
                     <button onclick="window.location.href='/upvote/<%=post._id%>'" class="icon-box <%= isLiked ? 'liked' : '' %>">
@@ -253,7 +254,7 @@
                         <span class="vote-count"><%=post.upVote%></span>
                     </button>
                     
-                    <button class="icon-box downvote">
+                    <button class="icon-box downVote" onclick="window.location.href='/downVote/2/<%=post._id%>'">
                         <i class="fas fa-arrow-down"></i>
                     </button>
                     <button class="icon-box comment-btn" onclick="window.location.href='/comments/0/<%=post.community_id%>/<%=post._id%>'">

@@ -189,7 +189,7 @@
                         <img src="<%= userProfile && userProfile.picture_name ? userProfile.picture_name : 'https://bootdey.com/img/Content/avatar/avatar6.png' %>" alt="User Profile" class="user-avatar">                        <div class="post-meta">
                             <span class="username"><%= user.name %></span>
                             <!-- <span class="post-time">Posted <%= new Date(post.createdAt).toLocaleString() %></span> -->
-                            <span class="community-name">r/<%= community.communityName %></span>
+                            <span class="community-name">bx/<%= community.communityName %></span>
                         </div>
                     </div>
                 </div>
@@ -217,7 +217,7 @@
                                 <% } %>
                                 <span>Upvote</span>
                             </button>
-                            <button class="vote-btn downvote">
+                            <button class="vote-btn downvote" onclick="window.location.href='/downVote/<%=flag%>/<%=post._id%>'">
                                 <i class="fas fa-arrow-down"></i>
                                 <span>Downvote</span>
                             </button>

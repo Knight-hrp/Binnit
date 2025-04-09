@@ -368,7 +368,7 @@
                                 <% } %>
                                 <span class="vote-count"><%=post.upVote%></span>
                             </button>
-                            <button class="icon-box downvote">
+                            <button class="icon-box downvote" onclick="window.location.href='/downVote/3/<%=post._id%>'">
                                 <i class="fas fa-arrow-down"></i>
                             </button>
                             <button class="icon-box comment-btn" onclick="window.location.href='/comments/1/<%=community._id%>/<%=post._id%>'">

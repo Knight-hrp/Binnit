@@ -383,7 +383,7 @@
                 <ul class="sub-menu show">
                     <div>
                         <li>
-                            <a href="#">
+                            <a href="/community/addCommunity">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M454-290h54v-162h162v-54H508v-164h-54v164H290v54h164v162Zm26.17 190q-78.81 0-148.21-29.91T211.23-211.1q-51.34-51.28-81.28-120.59Q100-401.01 100-479.83q0-79.07 29.97-148.69t81.35-121.13q51.38-51.5 120.59-80.92Q401.13-860 479.83-860q79.06 0 148.67 29.39 69.62 29.39 121.13 80.85 51.52 51.46 80.94 121.02Q860-559.18 860-480.09t-29.39 148.15q-29.39 69.06-80.84 120.49-51.44 51.44-120.98 81.45-69.55 30-148.62 30Z"/></svg>
                                 <span>Create Community</span>
                             </a>
@@ -446,28 +446,21 @@
             </h3>
             
             <span class="tooltip" data-tooltip="Edit Profile">
-                <a href="profileEdit.html">
-                    <button class="profile_edit_button" title="Edit profile">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M192.15-192.39h45.91l432.11-431.28-45.59-45.84-432.43 431.94v45.18Zm-35.8 72.42q-15.34 0-25.86-10.52t-10.52-25.86v-80.86q0-14.44 5.75-28.1 5.75-13.65 15.96-23.79l531.81-531.55q8.96-8.84 21.03-13.86 12.07-5.01 25.26-5.01 12.45 0 24.7 4.99 12.26 4.99 22.72 13.97l54.36 53.81q9.32 9.88 14.01 22.14 4.7 12.26 4.7 24.67 0 13.27-4.76 25.48-4.75 12.2-13.95 21.47L289.58-141.68q-10.26 10.21-23.78 15.96-13.53 5.75-28.17 5.75h-81.28Zm608.68-600.41-43.74-43.98 43.74 43.98Zm-117.62 73.63-22.83-22.76 45.59 45.84-22.76-23.08Z"/></svg>
+                <button class="profile_edit_button" title="Edit profile" onclick="openPopup()">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                        <path d="M192.15-192.39h45.91l432.11-431.28-45.59-45.84-432.43 431.94v45.18Zm-35.8 72.42q-15.34 0-25.86-10.52t-10.52-25.86v-80.86q0-14.44 5.75-28.1 5.75-13.65 15.96-23.79l531.81-531.55q8.96-8.84 21.03-13.86 12.07-5.01 25.26-5.01 12.45 0 24.7 4.99 12.26 4.99 22.72 13.97l54.36 53.81q9.32 9.88 14.01 22.14 4.7 12.26 4.7 24.67 0 13.27-4.76 25.48-4.75 12.2-13.95 21.47L289.58-141.68q-10.26 10.21-23.78 15.96-13.53 5.75-28.17 5.75h-81.28Zm608.68-600.41-43.74-43.98 43.74 43.98Zm-117.62 73.63-22.83-22.76 45.59 45.84-22.76-23.08Z"/>
+                    </svg>
                 </button>
-                </a>
             </span>
             </div>
             </div>
 
             <div class="profile_post_section">
-                    <div class="profile_overview_buttons">
+                <div class="profile_overview_buttons">
                     <button id="postsBtn" class="active" onclick="switchProfileTab('POSTS')">Posts</button>
-                    	<button id="likePostBtn" onclick="switchProfileTab('LIKES')">Like</button>
+                    <button id="likePostBtn" onclick="switchProfileTab('LIKES')">Like</button>
                     <button id="commentsBtn" onclick="switchProfileTab('COMMENTS')">Comments</button>
-                    </div>
-                    
-
-                    <a href="createPost.html">
-                         <button id="createBtn" class="active" onclick="switchProfileTab('POSTS')">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M463.08-463.58h-200q-7.2 0-12.06-4.73-4.87-4.73-4.87-12.11 0-7.39 4.87-12.2 4.86-4.8 12.06-4.8h200v-200q0-7.2 4.89-12.06 4.88-4.87 12.11-4.87 7.23 0 12.04 4.87 4.8 4.86 4.8 12.06v200h200q7.2 0 12.06 4.9 4.87 4.89 4.87 12.13 0 7.58-4.87 12.2-4.86 4.61-12.06 4.61h-200v200q0 7.53-4.89 12.23-4.88 4.7-12.11 4.7-7.23 0-12.04-4.7-4.8-4.7-4.8-12.23v-200Z"/></svg>
-                        </button>
-                    </a>
+                </div>
 
                     <hr class="profile_hr">
 
@@ -647,40 +640,47 @@
     
 <script>
     function switchProfileTab(type) {
-  document.getElementById("postsBtn").classList.remove("active");
-        document.getElementById("likePostBtn").classList.remove("active");
-  document.getElementById("commentsBtn").classList.remove("active");
-  document.getElementById("createBtn").classList.add("hidden");
+    // Remove active class from all buttons
+    document.getElementById("postsBtn").classList.remove("active");
+    document.getElementById("likePostBtn").classList.remove("active");
+    document.getElementById("commentsBtn").classList.remove("active");
 
-  document.getElementById("postsContent").classList.add("hidden");
-        document.getElementById("likesContent").classList.add("hidden");
-  document.getElementById("commentsContent").classList.add("hidden");
+    // Hide all content sections
+    document.getElementById("postsContent").classList.add("hidden");
+    document.getElementById("likesContent").classList.add("hidden");
+    document.getElementById("commentsContent").classList.add("hidden");
 
-  if (type === "POSTS") {
-    document.getElementById("postsBtn").classList.add("active");
-    document.getElementById("postsContent").classList.remove("hidden");
-    document.getElementById("createBtn").classList.remove("hidden");
-        } else if (type === "LIKES") {
-            document.getElementById("likePostBtn").classList.add("active");
-            document.getElementById("likesContent").classList.remove("hidden");
-        } else if (type === "COMMENTS") {
-    document.getElementById("commentsBtn").classList.add("active");
-    document.getElementById("commentsContent").classList.remove("hidden");
-  }
-}
-
-function checkContent() {
-    const contentDiv = document.querySelector('.dynamic_content_post');
-    const noContentMsg = document.querySelector('.no-content-message');
-    
-        if (contentDiv && noContentMsg && contentDiv.innerHTML.trim() === '') {
-        noContentMsg.style.display = 'flex';
-        } else if (noContentMsg) {
-        noContentMsg.style.display = 'none';
+    // Show the selected tab and add active class to the corresponding button
+    if (type === "POSTS") {
+        document.getElementById("postsBtn").classList.add("active");
+        document.getElementById("postsContent").classList.remove("hidden");
+    } else if (type === "LIKES") {
+        document.getElementById("likePostBtn").classList.add("active");
+        document.getElementById("likesContent").classList.remove("hidden");
+    } else if (type === "COMMENTS") {
+        document.getElementById("commentsBtn").classList.add("active");
+        document.getElementById("commentsContent").classList.remove("hidden");
     }
 }
+</script>
 
-checkContent();
+<script>
+     let isPopupVisible = false;
+  function openPopup() {
+
+    
+    const popup = document.getElementById("popup");
+
+    if (!isPopupVisible) {
+      popup.classList.remove("close");
+      popup.classList.add("show");
+    } else {
+      popup.classList.remove("show");
+      popup.classList.add("close");
+    }
+
+    isPopupVisible = !isPopupVisible;
+ }
 </script>
   </body>
 </html>

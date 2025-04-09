@@ -500,3 +500,121 @@ hr.profile_hr{
 .dynamic_content_post:empty {
     display: none;
 }
+
+
+.edit_popup_window{
+    background-color: #1F1F21;
+    width: 9.5cm;
+    height: 15.37cm;
+    border-radius: 12px;
+    position: absolute;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    top: 50%;
+    left: 50%;   
+    transform: translate(-20%,10%);
+    visibility: hidden;
+    transition: visibility 0s linear 0.3s;
+    z-index: 1000;
+}
+
+.edit_popup_window.show {
+    visibility: visible;
+    animation: expandIn 0.3s ease forwards;
+    transition-delay: 0s;
+}
+
+.edit_popup_window.close {
+    animation: expandOut 0.3s backwards;
+}
+
+@keyframes expandIn {
+    0% {
+        transform: translate(-20%, 10%) scale(0);
+    }
+
+    100% {
+        transform: translate(-20%, 10%) scale(1);
+        
+    }
+}
+
+@keyframes expandOut {
+    0% {
+        transform: translate(-20%, 10%) scale(1);
+    }
+
+    100% {
+        transform: translate(-20%, 10%) scale(0);
+
+    }
+}
+.edit_popup_window h3{
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.edit_popup_window h4{
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 21px;
+}
+
+.edit_popup_window hr{
+    width: 96%;
+    margin-left: 7px;
+    margin-bottom: 0;
+}
+
+.sub_heading{
+    margin-left: 17px;
+}
+
+.pop_up_profile_heading{
+    margin-left: 17px;
+    padding-top: 20px;
+}
+
+.edit_popup_window button{
+    display: flex;
+    flex-direction: row;
+    margin-left: 7px;
+    margin-bottom: 9px;
+    height: 1.3cm;
+    font-size: 16px;
+    justify-content: flex-start;
+    align-items: center;
+    width: 8.9cm;
+    padding-left: 10px;
+    padding-bottom: 16px;
+    padding-top: 16px;
+    background-color: transparent;
+    border: none;
+    gap: 7px;
+    font-weight: 530;
+    cursor: pointer;
+    
+}
+
+.edit_popup_window button svg:last-of-type {
+    margin-left: auto;
+    padding:5px 5px;
+}
+
+.edit_popup_window button:active svg:last-of-type {
+    fill: var(--deep-purple);
+    padding: 5px 5px;
+    border-radius: 20px;
+    transition: background-color 0.11s ease-in-out;
+    transition: fill 0.3s ease;
+}
+
+.edit_popup_window button:hover svg:last-of-type {
+    background-color: #555;
+    padding: 5px 5px;    
+    border-radius: 20px;
+    transition: background-color 0.11s ease-in-out;
+}
+
+.edit_popup_window svg:last-of-type{
+    fill: var(--glowing-magenta);
+}

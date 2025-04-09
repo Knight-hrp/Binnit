@@ -3,6 +3,7 @@ const PROFILEPICTURE = require("../models/userProfilePicture")
 const POST = require("../models/post");
 const UPVOTE = require("../models/upVote");
 const COMMUNITY = require("../models/community");
+const DOWNVOTE = require("../models/downVote");
 
 async function renderHome(req,res)
 {
@@ -12,7 +13,7 @@ async function renderHome(req,res)
     const userProfile = await PROFILEPICTURE.find({});
     const userUid = req.cookies?.uid; 
     if (!userUid) {
-        return res.render("home",{posts: post,users:user,userProfiles: userProfile,community: community,});
+        return res.render("home",{posts: post,users:user,userProfiles: userProfile,community: community});
     }
     else
     {
@@ -31,6 +32,12 @@ async function setUpVote(post_id, user_id)
     {
         await UPVOTE.create({post_id: post_id, user_id: user_id});
         await POST.findByIdAndUpdate( post_id, {$inc: {upVote: 1}});
+        const exist_downVote = await DOWNVOTE.find({post_id: post_id, user_id: user_id});
+        if(exist_downVote.length > 0)
+        {
+            await DOWNVOTE.deleteOne({post_id: post_id, user_id: user_id});
+            await POST.findByIdAndUpdate(post_id, {$inc: {downVote: -1}});
+        }
     }
     else
     {
