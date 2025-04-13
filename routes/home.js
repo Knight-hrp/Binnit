@@ -47,6 +47,8 @@ async function setUpVote(post_id, user_id)
     }
 }
 
+
+
 module.exports = {
     renderHome,
     setUpVote

@@ -5,7 +5,7 @@ const USERPROFILE = require("../models/userProfilePicture");
 const {ChangeRole} = require('./user')
 const COMMUNTIYROLE = require('../models/communityRole');
 
-async function createCommunity(name, body, id, filepath) {
+async function createCommunity( name, body, id, filepath) {
     const communityName = body.communityName;
     const aboutCommunity = body.aboutCommunity;
     return await COMMUNITY.create({
@@ -22,6 +22,7 @@ async function getCommunity(req,res){
     return res.render("community",{
         AllCom: allCommunities,
         joinedCommunities: joinedCommunities,
+        curr_user: req.user,
     })
 }
 
@@ -42,18 +43,18 @@ async function exploreCommunity(req,res)
 {
     const joinedCommunities = await JOINCOMMUNITY.find({userID:req.user._id});
     const allCommunities = await COMMUNITY.find({});
-    return res.render("exploreCommunity",{joinedCommunities:  joinedCommunities,allCommunities: allCommunities});
+    return res.render("exploreCommunity",{joinedCommunities:  joinedCommunities,allCommunities: allCommunities, curr_user: req.user});
 }
 
 async function renderCreatePost(req,res)
 {
     const community = req.params.community;
-    return res.render("createPost",{community: community});
+    return res.render("createPost",{community: community, curr_user: req.user});
 }
 async function renderCreatePostFile(req,res)
 {
     const community = req.params.community;
-    return res.render("createPostFile",{community: community});
+    return res.render("createPostFile",{community: community, curr_user:req.user});
 }
 
 async function renderAssignModerator(req,res)
@@ -104,7 +105,8 @@ async function renderAssignModerator(req,res)
         searchQuery: searchQuery,
         success: success,
         error: error,
-        communityRoles: communityRoles
+        communityRoles: communityRoles,
+        curr_user: req.user,
     });
 }
 
@@ -135,14 +137,16 @@ async function searchCommunity(req, res) {
                 searchResults: communities,
                 joinedCommunities: joinedCommunities,
                 allCommunities: communities,
-                searchQuery: searchQuery
+                searchQuery: searchQuery,
+                curr_user: req.user,
             });
         } else {
             return res.render("community", {
                 AllCom: communities,
                 joinedCommunities: joinedCommunities,
                 searchQuery: searchQuery,
-                isSearchResult: true
+                isSearchResult: true,
+                curr_user: req.user
             });
         }
     } catch (error) {

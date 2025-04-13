@@ -6,11 +6,6 @@ const { restrictToNonLoginUser } = require('../middleware/auth');
 // Apply authentication middleware to all routes
 router.use(restrictToNonLoginUser);
 
-// Root route for comments
-router.get("/", (req, res) => {
-    res.render("comments");
-});
-
 // Route for getting comments by community and post ID
 router.get('/:flag/:community/:postId', async (req,res)=>{
     getCommentsByPost(req.user._id, req.params.community, req.params.postId, req.params.flag, res);

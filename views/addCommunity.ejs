@@ -11,6 +11,190 @@
     <link rel="stylesheet" href="/homepage_Styles.css">
     <link rel="stylesheet" href="/scrollbar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --deep-purple: #4a148c;
+            --royal-purple: #7b1fa2;
+        }
+
+        .form-floating {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            width: 95%;
+            padding: 16px;
+            font-size: 16px;
+            background-color: #1a1a1d;
+            border: 2px solid #333;
+            border-radius: 8px;
+            color: #e3e3e3;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--royal-purple);
+            box-shadow: 0 0 0 2px rgba(123, 31, 162, 0.2);
+        }
+
+        .form-floating label {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #818384;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            font-size: 16px;
+            padding: 0 6px;
+            background-color: #1a1a1d;
+        }
+
+        .form-floating input:focus ~ label,
+        .form-floating input:not(:placeholder-shown) ~ label,
+        .form-floating textarea:focus ~ label,
+        .form-floating textarea:not(:placeholder-shown) ~ label {
+            top: 0;
+            transform: translateY(-50%) scale(0.85);
+            background-color: #1a1a1d;
+            padding: 0 6px;
+            color: var(--royal-purple);
+        }
+
+        .text-danger {
+            color: #ff4444;
+            margin-left: 4px;
+        }
+
+        .char-count {
+            position: absolute;
+            right: 16px;
+            top: 16px;
+            font-size: 12px;
+            color: #818384;
+        }
+
+        .button-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+
+        .button {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .button svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .button-secondary {
+            background-color: transparent;
+            color: #e3e3e3;
+            border: 1px solid #2d2d2e;
+        }
+
+        .button-secondary:hover {
+            background-color: rgba(45, 45, 46, 0.5);
+            border-color: #363637;
+        }
+
+        .button-primary {
+            background: linear-gradient(45deg, var(--deep-purple), var(--royal-purple));
+            color: white;
+            box-shadow: 0 4px 12px rgba(123, 31, 162, 0.2);
+        }
+
+        .button-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(123, 31, 162, 0.3);
+        }
+
+        .button-primary:hover svg {
+            transform: translateX(4px);
+        }
+
+        .button-primary:active {
+            transform: translateY(1px);
+        }
+
+        .createPost {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .createPost h2 {
+            color: #e3e3e3;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .content-box {
+            /* background: #1a1a1b; */
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid #2d2d2e;
+        }
+
+        .form-floating textarea.form-control {
+            min-height: 120px;
+            padding: 1rem;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 8px;
+            color: #e3e3e3;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-floating textarea.form-control:focus {
+            border-color: #7b1fa2;
+            box-shadow: 0 0 0 2px rgba(123, 31, 162, 0.25);
+            outline: none;
+        }
+
+        .form-floating label {
+            position: absolute;
+            left: 1rem;
+            top: 1rem;
+            color: #888;
+            transform-origin: 0 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .form-floating textarea.form-control:focus ~ label,
+        .form-floating textarea.form-control:not(:placeholder-shown) ~ label {
+            transform: translateY(-1.5rem) scale(0.85);
+            color: #7b1fa2;
+        }
+
+        .char-count {
+            position: absolute;
+            right: 1rem;
+            bottom: 0.5rem;
+            font-size: 0.8rem;
+            color: #888;
+        }
+    </style>
   </head>       
 
   <body>
@@ -21,12 +205,16 @@
                 <img src="/svg_icons/512px-removebg-preview.png">
             </div>
             
-            <button onclick="window.location.href='/user/signup'">
-                Sign Up
-            </button>
-             <button onclick="window.location.href='/user/Login'">
-                Log In
-            </button>
+            <%if(!locals.curr_user) {%>
+                <button onclick="window.location.href='/user/signup'">
+                    Sign Up
+                </button>
+                 <button onclick="window.location.href='/user/Login'">
+                    Log In
+                </button>
+                <% } else {%>
+                    <button onclick="window.location.href='/user/Logout'">Log out</button>
+                <% } %>
         </div>
 
        <div class="middleLogo">
@@ -35,9 +223,6 @@
             </svg>
             
         </div>
-
-       
-   
 
         <div class="right">
            <div class="search-bar">
@@ -74,18 +259,6 @@
                 </div>
             </li>
 
-            <li>
-                <a href="/community/explore">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-84q-82 0-154-31.5t-125.5-85Q147-254 115.5-326T84-480q0-82 31.5-154t85-125.5Q254-813 326-844.5T480-876q154 0 265.5 102T873-522h-54q-10-94-66-169T608-800v19q0 35-25.5 60.5T522-695h-84v86q0 17-12.5 29.5T396-567h-88v86h61v128h-18L146-558q-3 20-5.5 39t-2.5 39q0 141 99 241.5T480-137v53Zm356-41L696-263q-17 14-36.5 19t-39.5 5q-60 0-100.5-40.5T479-380q0-60 40.5-100.5T620-521q60 0 100.5 40.5T761-380q0 21-5.5 41.5T735-301l140 137-39 39ZM620-293q36 0 61.5-25.5T707-380q0-36-25.5-61.5T620-467q-36 0-61.5 25.5T533-380q0 36 25.5 61.5T620-293Z"/></svg>
-                    <span>Explore Communities</span>
-                </a>
-            </li>
-            <li>
-                <a href="test.html">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M212-172v-402l268-203 268 203v402H550v-248H410v248H212Z"/></svg>
-                    <span>Test</span>
-                </a>
-            </li>
 
             <hr>
 
@@ -109,12 +282,13 @@
                                 <span>Join Community</span>
                             </a>
                         </li>
-                            <a href="#">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M358.14-326q-37.14 0-63.64-26.36t-26.5-63.5q0-37.14 26.36-63.64t63.5-26.5q37.14 0 63.64 26.36t26.5 63.5q0 37.14-26.36 63.64t-63.5 26.5ZM226-102q-36.73 0-61.36-24.64Q140-151.27 140-188v-508q0-36.72 24.64-61.36Q189.27-782 226-782h48v-88h58v88h300v-88h54v88h48q36.72 0 61.36 24.64T820-696v508q0 36.73-24.64 61.36Q770.72-102 734-102H226Zm0-54h508q12 0 22-10t10-22v-360H194v360q0 12 10 22t22 10Zm-32-446h572v-94q0-12-10-22t-22-10H226q-12 0-22 10t-10 22v94Zm0 0v-126 126Z"/></svg>
-                                <span>Events</span>
+
+                        <li>
+                            <a href="/community/explore">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-84q-82 0-154-31.5t-125.5-85Q147-254 115.5-326T84-480q0-82 31.5-154t85-125.5Q254-813 326-844.5T480-876q154 0 265.5 102T873-522h-54q-10-94-66-169T608-800v19q0 35-25.5 60.5T522-695h-84v86q0 17-12.5 29.5T396-567h-88v86h61v128h-18L146-558q-3 20-5.5 39t-2.5 39q0 141 99 241.5T480-137v53Zm356-41L696-263q-17 14-36.5 19t-39.5 5q-60 0-100.5-40.5T479-380q0-60 40.5-100.5T620-521q60 0 100.5 40.5T761-380q0 21-5.5 41.5T735-301l140 137-39 39ZM620-293q36 0 61.5-25.5T707-380q0-36-25.5-61.5T620-467q-36 0-61.5 25.5T533-380q0 36 25.5 61.5T620-293Z"/></svg>
+                                <span>Explore Communities</span>
                             </a>
                         </li>
-                        <li><a href="#">Documents</a></li>
                     </div>
                 </ul>
             </li>
@@ -128,6 +302,23 @@
                 </button>
                 <ul class="sub-menu show">
                     <div>
+                        <% if(locals.curr_user.role === "NORMAL") { %>
+                            <li>
+                                <a href="/feedback">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#e3e3e3"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm0 15.2L18.8 16H4V4h16v13.2z"/><path d="M14 8H6v2h8V8zm0-3H6v2h8V5zm-8 6h5v2H6v-2z"/></svg>
+                                    <span>Feedback</span>
+                                </a>
+                            </li>
+                            <% } else { %>
+                            <li>
+                                <a href="/feedback/show">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M280-600v-80h560v80H280Zm0 160v-80h560v80H280Zm0 160v-80h560v80H280ZM160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680q17 0 28.5 11.5T200-640q0 17-11.5 28.5T160-600Zm0 160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520q17 0 28.5 11.5T200-480q0 17-11.5 28.5T160-440Zm0 160q-17 0-28.5-11.5T120-320q0-17 11.5-28.5T160-360q17 0 28.5 11.5T200-320q0 17-11.5 28.5T160-280Z"/></svg>
+                                    <span>User Feedbacks</span>
+                                </a>
+                            </li>
+                            <% } %>
+
+                        <li>
                         <li>
                             <a href="#">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M454-290h54v-230h-54v230Zm25.82-296q12.68 0 21.43-8.57 8.75-8.58 8.75-21.25 0-12.68-8.57-21.43-8.58-8.75-21.25-8.75-12.68 0-21.43 8.57-8.75 8.58-8.75 21.25 0 12.68 8.57 21.43 8.58 8.75 21.25 8.75Zm.35 486q-78.81 0-148.21-29.91T211.23-211.1q-51.34-51.28-81.28-120.59Q100-401.01 100-479.83q0-79.07 29.97-148.69t81.35-121.13q51.38-51.5 120.59-80.92Q401.13-860 479.83-860q79.06 0 148.67 29.39 69.62 29.39 121.13 80.85 51.52 51.46 80.94 121.02Q860-559.18 860-480.09t-29.39 148.15q-29.39 69.06-80.84 120.49-51.44 51.44-120.98 81.45-69.55 30-148.62 30Zm-.17-54q136.51 0 231.26-94.74Q806-343.49 806-480t-94.74-231.26Q616.51-806 480-806t-231.26 94.74Q154-616.51 154-480t94.74 231.26Q343.49-154 480-154Zm0-326Z"/></svg>
@@ -153,37 +344,49 @@
                 <p>Share your interests and connect with like-minded people</p>
             </div>
 
-            <form id="communityForm" method="post" action="/community/addCommunity" enctype="multipart/form-data" class="create-community-form">
-                <div class="form-group">
-                    <label for="communityName">Community Name</label>
-                    <input type="text" id="communityName" name="communityName" required 
-                           placeholder="Enter a unique name for your community">
-                </div>
+            <div class="createPost">
+                <h2>Create New Community</h2>
+                <div class="content-box">
+                    <form id="communityForm" method="post" action="/community/addCommunity" enctype="multipart/form-data" class="create-community-form">
+                        <div class="form-floating">
+                            <input type="text" name="name" class="form-control" id="nameInput" placeholder=" " required maxlength="50">
+                            <label for="nameInput">Community Name <span class="text-danger">*</span></label>
+                            <span id="nameCharCount" class="char-count">0/50</span>
+                        </div>
 
-                <div class="form-group">
-                    <label for="image">Community Image</label>
-                    <div class="image-upload-container">
-                        <input type="file" id="image" name="image" accept="image/*" style="display: none;">
-                        <label for="image" class="image-upload-label">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
-                                <path d="M450-280h60v-170h170v-60H510v-170h-60v170H280v60h170v170ZM240-120q-33 0-56.5-23.5T160-200v-560q0-33 23.5-56.5T240-840h480q33 0 56.5 23.5T800-760v560q0 33-23.5 56.5T720-120H240Zm0-80h480v-560H240v560Zm0-560v560-560Z"/>
-                            </svg>
-                            <span>Choose File</span>
-                        </label>
-                    </div>
-                </div>
+                        <div class="form-floating">
+                            <textarea name="description" class="form-control" id="descriptionInput" placeholder=" " required maxlength="300"></textarea>
+                            <label for="descriptionInput">Description <span class="text-danger">*</span></label>
+                            <span id="descCharCount" class="char-count">0/300</span>
+                        </div>
 
-                <div class="form-group">
-                    <label for="aboutCommunity">About Community</label>
-                    <textarea id="aboutCommunity" name="aboutCommunity" required 
-                              placeholder="Tell people what your community is about"></textarea>
-                </div>
+                        <div class="form-group">
+                            <label for="image">Community Image</label>
+                            <div class="image-upload-container">
+                                <input type="file" id="image" name="image" accept="image/*" style="display: none;">
+                                <label for="image" class="image-upload-label">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                                        <path d="M450-280h60v-170h170v-60H510v-170h-60v170H280v60h170v170ZM240-120q-33 0-56.5-23.5T160-200v-560q0-33 23.5-56.5T240-840h480q33 0 56.5 23.5T800-760v560q0 33-23.5 56.5T720-120H240Zm0-80h480v-560H240v560Zm0-560v560-560Z"/>
+                                    </svg>
+                                    <span>Choose File</span>
+                                </label>
+                            </div>
+                        </div>
 
-                <div class="form-actions">
-                    <button type="button" class="cancel-button" onclick="window.location.href='/'">Cancel</button>
-                    <button type="submit" class="submit-button">Create Community</button>
+                        <div class="button-group">
+                            <button type="button" class="button button-secondary" onclick="window.location.href='/'">
+                                Cancel
+                            </button>
+                            <button type="submit" class="button button-primary">
+                                <span>Create Community</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
+                                    <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 
@@ -218,6 +421,24 @@
             form.addEventListener('submit', function(e) {
                 submitButton.disabled = true;
                 submitButton.textContent = 'Creating Community...';
+            });
+
+            document.getElementById("nameInput").addEventListener("input", function() {
+                let maxLength = 50;
+                let currentLength = this.value.length;
+                document.getElementById("nameCharCount").textContent = `${currentLength}/${maxLength}`;
+                if (currentLength > maxLength) {
+                    this.value = this.value.substring(0, maxLength);
+                }
+            });
+
+            document.getElementById("descriptionInput").addEventListener("input", function() {
+                let maxLength = 300;
+                let currentLength = this.value.length;
+                document.getElementById("descCharCount").textContent = `${currentLength}/${maxLength}`;
+                if (currentLength > maxLength) {
+                    this.value = this.value.substring(0, maxLength);
+                }
             });
         });
     </script>

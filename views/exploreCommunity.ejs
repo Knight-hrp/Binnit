@@ -35,12 +35,16 @@
                 <img src="/svg_icons/512px-removebg-preview.png">
             </div>
             
-            <button onclick="window.location.href='/user/signup'">
-                Sign Up
-            </button>
-             <button onclick="window.location.href='/user/Login'">
-                Log In
-            </button>
+            <%if(!locals.curr_user) {%>
+                <button onclick="window.location.href='/user/signup'">
+                    Sign Up
+                </button>
+                 <button onclick="window.location.href='/user/Login'">
+                    Log In
+                </button>
+                <% } else {%>
+                <button onclick="window.location.href='/user/Logout'">Log out</button>
+                <% } %>
         </div>
 
        <div class="middleLogo">
@@ -89,12 +93,7 @@
                 </div>
             </li>
 
-            <li>
-                <a href="test.html">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M212-172v-402l268-203 268 203v402H550v-248H410v248H212Z"/></svg>
-                    <span>Test</span>
-                </a>
-            </li>
+
 
             <hr>
 
@@ -124,13 +123,7 @@
                                 <span>Explore Communities</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="#">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M358.14-326q-37.14 0-63.64-26.36t-26.5-63.5q0-37.14 26.36-63.64t63.5-26.5q37.14 0 63.64 26.36t26.5 63.5q0 37.14-26.36 63.64t-63.5 26.5ZM226-102q-36.73 0-61.36-24.64Q140-151.27 140-188v-508q0-36.72 24.64-61.36Q189.27-782 226-782h48v-88h58v88h300v-88h54v88h48q36.72 0 61.36 24.64T820-696v508q0 36.73-24.64 61.36Q770.72-102 734-102H226Zm0-54h508q12 0 22-10t10-22v-360H194v360q0 12 10 22t22 10Zm-32-446h572v-94q0-12-10-22t-22-10H226q-12 0-22 10t-10 22v94Zm0 0v-126 126Z"/></svg>
-                                <span>Events</span>
-                            </a>
-                        </li>
-                        <li><a href="#">Documents</a></li>
+                        
                     </div>
                 </ul>
             </li>
@@ -144,6 +137,23 @@
                 </button>
                 <ul class="sub-menu show">
                     <div>
+                        <% if(locals.curr_user.role === "NORMAL") { %>
+                            <li>
+                                <a href="/feedback">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#e3e3e3"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm0 15.2L18.8 16H4V4h16v13.2z"/><path d="M14 8H6v2h8V8zm0-3H6v2h8V5zm-8 6h5v2H6v-2z"/></svg>
+                                    <span>Feedback</span>
+                                </a>
+                            </li>
+                            <% } else { %>
+                            <li>
+                                <a href="/feedback/show">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M280-600v-80h560v80H280Zm0 160v-80h560v80H280Zm0 160v-80h560v80H280ZM160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680q17 0 28.5 11.5T200-640q0 17-11.5 28.5T160-600Zm0 160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520q17 0 28.5 11.5T200-480q0 17-11.5 28.5T160-440Zm0 160q-17 0-28.5-11.5T120-320q0-17 11.5-28.5T160-360q17 0 28.5 11.5T200-320q0 17-11.5 28.5T160-280Z"/></svg>
+                                    <span>User Feedbacks</span>
+                                </a>
+                            </li>
+                            <% } %>
+
+                        <li>
                         <li>
                             <a href="#">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M454-290h54v-230h-54v230Zm25.82-296q12.68 0 21.43-8.57 8.75-8.58 8.75-21.25 0-12.68-8.57-21.43-8.58-8.75-21.25-8.75-12.68 0-21.43 8.57-8.75 8.58-8.75 21.25 0 12.68 8.57 21.43 8.58 8.75 21.25 8.75Zm.35 486q-78.81 0-148.21-29.91T211.23-211.1q-51.34-51.28-81.28-120.59Q100-401.01 100-479.83q0-79.07 29.97-148.69t81.35-121.13q51.38-51.5 120.59-80.92Q401.13-860 479.83-860q79.06 0 148.67 29.39 69.62 29.39 121.13 80.85 51.52 51.46 80.94 121.02Q860-559.18 860-480.09t-29.39 148.15q-29.39 69.06-80.84 120.49-51.44 51.44-120.98 81.45-69.55 30-148.62 30Zm-.17-54q136.51 0 231.26-94.74Q806-343.49 806-480t-94.74-231.26Q616.51-806 480-806t-231.26 94.74Q154-616.51 154-480t94.74 231.26Q343.49-154 480-154Zm0-326Z"/></svg>

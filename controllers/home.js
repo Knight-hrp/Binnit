@@ -21,7 +21,7 @@ async function renderHome(req,res)
         const curr_user = getUser(userUid);
         const liked = await UPVOTE.find({user_id: curr_user._id});
         console.log(liked);
-        return res.render("home",{posts: post,users:user,userProfiles: userProfile,community: community,upvotes: liked});
+        return res.render("home",{posts: post,users:user,userProfiles: userProfile,community: community,upvotes: liked, curr_user: curr_user});
     }
 }
 
@@ -46,4 +46,4 @@ async function setUpVote(post_id, user_id)
     }
 }
 
-module.exports = {renderHome, setUpVote};
+module.exports = {renderHome};

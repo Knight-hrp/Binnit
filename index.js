@@ -17,6 +17,7 @@ const communityRoute = require('./routes/community');
 const upVoteRoute = require('./routes/upVote')
 const commentsRoute = require('./routes/comments');
 const downVoteRoute = require('./routes/downVote');
+const feedbackRoute = require('./routes/feedback')
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "css")));
@@ -38,6 +39,8 @@ const UPVOTE = require('./models/upVote');
 const COMMENTS = require('./models/comments');
 const COMMUNTIYROLE = require('./models/communityRole');
 const DOWNVOTE = require('./models/downVote');
+const COMMENTUPVOTE = require('./models/commentUpvote');
+const FEEDBACK =  require('./models/feedback');
 
 const {connectToMongoDB} = require("./connect")
 
@@ -54,12 +57,13 @@ app.use("/profile", restrictToNonLoginUser, userProfileRoute);
 app.use("/community",restrictToNonLoginUser, communityRoute);
 app.use("/upVote", restrictToNonLoginUser, upVoteRoute);
 app.use("/comments", restrictToNonLoginUser, commentsRoute)
-app.use("/downVote", restrictToNonLoginUser, downVoteRoute)
+app.use("/downVote", restrictToNonLoginUser, downVoteRoute);
+app.use("/feedback", restrictToNonLoginUser, feedbackRoute)
 
 app.use("/demo/chat",(req,res)=>{
     res.render("chatBar");  
 })
 
 server.listen(8000,()=>{
-    console.log(`WEB Application run on port: ${port} `);
+    console.log(`WEB Application running on : http://localhost:${port} `);
 });

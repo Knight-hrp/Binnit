@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { setUpVote } = require("../controllers/home");
+const { setUpVote, upVoteComment } = require("../controllers/upVote");
 
 router.get('/:post_id',async (req,res)=>
 {
@@ -23,5 +23,7 @@ router.get('/:flag/:community_id/:post_id',async (req,res)=>
         setUpVote(req.params.post_id,req.user._id);
         res.redirect(`/comments/${flag}/${community_id}/${post_id}`);
     });
+
+router.get('/:flag/:community_id/:post_id/:comment_id', upVoteComment);
     
 module.exports = router;

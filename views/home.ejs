@@ -12,13 +12,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         .icon-box.liked {
-            color: #0079d3;
+            color: #7b1fa2;
             font-weight: bold;
         }
         
         .icon-box.liked .fa-arrow-up,
         .icon-box.liked .vote-count {
-            color: #0079d3;
+            color: #7b1fa2;
         }
         
         .fa-solid.fa-arrow-up {
@@ -30,12 +30,64 @@
         }
         
         .icon-box:hover {
-            color: #0079d3;
+            color: #7b1fa2;
             transform: translateY(-2px);
         }
         
         .icon-box:hover .fa-arrow-up {
             transform: scale(1.1);
+        }
+
+        .sub-menu {
+            display: none;
+            padding-left: 20px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            max-height: 0;
+        }
+
+        .sub-menu.show {
+            display: block;
+            max-height: 500px;
+        }
+
+        .dropdown-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-button svg {
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-button.active svg {
+            transform: rotate(180deg);
+        }
+
+        .sub-menu div {
+            padding: 8px 0;
+        }
+
+        .sub-menu a {
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #e3e3e3;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .sub-menu a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
         }
     </style>
   </head>       
@@ -47,24 +99,23 @@
             <div class="binnit-ico">
                 <img src="/svg_icons/512px-removebg-preview.png">
             </div>
-            
-            <button onclick="window.location.href='/user/signup'">
-                Sign Up
-            </button>
-             <button onclick="window.location.href='/user/Login'">
-                Log In
-            </button>
+            <%if(!locals.curr_user) {%>
+                <button onclick="window.location.href='/user/signup'">
+                    Sign Up
+                </button>
+                <button onclick="window.location.href='/user/Login'">
+                    Log In
+                </button>
+            <% } else {%>
+                <button onclick="window.location.href='/user/Logout'">Log out</button>
+            <% } %>
         </div>
 
        <div class="middleLogo">
             <svg width="400" height="100" viewBox="-12 -6 24 12" xmlns="http://www.w3.org/2000/svg">
                 <path d="M -9 -4.8 H -4.2 V 0 H -9 V -4.8 M -8.4336 -0.5409 H -5.2786 V -1.0487 H -4.7365 V -2.6521 H -5.2975 V -3.1676 H -7.4051 V -4.2177 H -8.4431 V -0.5364 M -7.3864 -1.5793 H -5.8119 V -2.1021 H -7.3894 V -1.5793 M -3.7074 -0.5452 V -3.1672 H -2.6567 V -0.5452 H -3.7074 M -1.5965 -0.5453 H -0.5478 V -2.6427 H 0.5071 V -0.5391 H 1.5433 V -3.1621 H 1.0262 V -3.6849 H -1.6005 V -0.5454 M 2.6256 -0.542 H 3.6681 V -2.6508 H 4.7341 V -0.5331 H 5.7714 V -3.1621 H 5.2427 V -3.6879 H 2.6254 V -0.5409 M 6.2967 -3.1617 H 7.355 V -0.5388 H 6.2957 V -3.1657 M 8.9591 -4.7181 H 9.9826 V -3.6773 H 11.0343 V -2.6393 H 9.9933 V -1.574 H 11.0324 V -0.5426 H 9.4762 V -1.0647 H 8.9552 V -2.6537 H 8.3907 V -3.6758 H 8.954 V -4.7183 M 6.3824 -3.2754 H 6.6016 V -3.3839 H 6.7105 V -3.4897 H 6.8187 V -3.6 H 7.4687 V -3.7106 H 7.5748 V -3.8148 H 7.6866 V -3.9218 H 7.791 V -4.579 H 7.6865 V -4.6843 H 7.5762 V -4.7946 H 6.276 V -4.6842 H 6.1647 V -4.5763 H 6.0594 V -3.9283 H 6.1659 V -3.7072 H 6.2737 V -3.5993 H 6.3827 V -3.2757 M 6.3783 -4.2502 H 7.0338 V -4.1348 H 6.3758 V -4.2502 M 6.3798 -4.4627 H 7.2535 V -4.3548 H 6.3809 V -4.4616 M -3.5263 -3.3709 H -2.8234 V -3.4703 H -2.726 V -3.5667 H -2.6204 V -3.6723 H -2.5198 V -4.376 H -2.622 V -4.4763 H -2.7273 V -4.5768 H -2.8239 V -4.6757 V -4.6757 H -3.5259 V -4.5754 H -3.6292 V -4.4764 H -3.7298 V -4.3765 H -3.8282 V -3.6672 H -3.7277 V -3.567 H -3.6275 V -3.4677 H -3.5273 V -3.37 M -3.7258 -4.274 H -3.6279 V -4.376 H -3.5259 V -4.4711 H -3.4266 V -4.5732 H -2.9247 V -4.4683 H -2.824 V -4.3677 H -2.7247 V -4.2712 H -2.6269 V -3.7679 H -2.8226 V -3.8685 H -3.5231 V -3.7693 H -3.7258 V -4.274 M -3.527 -3.6707 H -3.4243 V -3.7726 H -2.9242 V -3.6647 H -2.8257 V -3.5722 H -2.9233 V -3.472 H -3.4251 V -3.5705 H -3.527 V -3.6698 M -3.3267 -4.4724 V -4.373 H -3.4277 V -4.071 H -3.3283 V -3.9666 H -3.0245 V -4.0678 H -2.921 V -4.3742 H -3.0241 V -4.4724 H -3.3271 M -3.2203 -4.3701 H -3.1273 V -4.2704 H -3.0248 V -4.1722 H -3.1274 V -4.075 H -3.2218 V -4.1727 H -3.3223 V -4.2702 H -3.2203 V -4.3708" fill="white" stroke="wihite" stroke-width="0"/>
             </svg>
-            
         </div>
-
-
-
 
     </div>
 
@@ -89,13 +140,6 @@
                     <span>Profile</span>
                     </a>
                 </div>
-            </li>
-
-            <li>
-                <a href="test.html">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M212-172v-402l268-203 268 203v402H550v-248H410v248H212Z"/></svg>
-                    <span>Test</span>
-                </a>
             </li>
             
             <hr>
@@ -129,13 +173,6 @@
                             </a>
                         </li>
 
-                        <li>
-                            <a href="#">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M358.14-326q-37.14 0-63.64-26.36t-26.5-63.5q0-37.14 26.36-63.64t63.5-26.5q37.14 0 63.64 26.36t26.5 63.5q0 37.14-26.36 63.64t-63.5 26.5ZM226-102q-36.73 0-61.36-24.64Q140-151.27 140-188v-508q0-36.72 24.64-61.36Q189.27-782 226-782h48v-88h58v88h300v-88h54v88h48q36.72 0 61.36 24.64T820-696v508q0 36.73-24.64 61.36Q770.72-102 734-102H226Zm0-54h508q12 0 22-10t10-22v-360H194v360q0 12 10 22t22 10Zm-32-446h572v-94q0-12-10-22t-22-10H226q-12 0-22 10t-10 22v94Zm0 0v-126 126Z"/></svg>
-                                <span>Events</span>
-                            </a>
-                        </li>
-                        <li><a href="#">Documents</a></li>
                     </div>
                 </ul>
             </li>
@@ -149,6 +186,23 @@
                 </button>
                 <ul class="sub-menu show">
                     <div>
+                        <% if(locals.curr_user) {%>
+                        <% if(locals.curr_user.role === "NORMAL") { %>
+                        <li>
+                            <a href="/feedback">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#e3e3e3"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm0 15.2L18.8 16H4V4h16v13.2z"/><path d="M14 8H6v2h8V8zm0-3H6v2h8V5zm-8 6h5v2H6v-2z"/></svg>
+                                <span>Feedback</span>
+                            </a>
+                        </li>
+                        <% } else { %>
+                        <li>
+                            <a href="/feedback/show">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M280-600v-80h560v80H280Zm0 160v-80h560v80H280Zm0 160v-80h560v80H280ZM160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680q17 0 28.5 11.5T200-640q0 17-11.5 28.5T160-600Zm0 160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520q17 0 28.5 11.5T200-480q0 17-11.5 28.5T160-440Zm0 160q-17 0-28.5-11.5T120-320q0-17 11.5-28.5T160-360q17 0 28.5 11.5T200-320q0 17-11.5 28.5T160-280Z"/></svg>
+                                <span>User Feedbacks</span>
+                            </a>
+                        </li>
+                        <% } %>
+                        <% } %>
                         <li>
                             <a href="#">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M454-290h54v-230h-54v230Zm25.82-296q12.68 0 21.43-8.57 8.75-8.58 8.75-21.25 0-12.68-8.57-21.43-8.58-8.75-21.25-8.75-12.68 0-21.43 8.57-8.75 8.58-8.75 21.25 0 12.68 8.57 21.43 8.58 8.75 21.25 8.75Zm.35 486q-78.81 0-148.21-29.91T211.23-211.1q-51.34-51.28-81.28-120.59Q100-401.01 100-479.83q0-79.07 29.97-148.69t81.35-121.13q51.38-51.5 120.59-80.92Q401.13-860 479.83-860q79.06 0 148.67 29.39 69.62 29.39 121.13 80.85 51.52 51.46 80.94 121.02Q860-559.18 860-480.09t-29.39 148.15q-29.39 69.06-80.84 120.49-51.44 51.44-120.98 81.45-69.55 30-148.62 30Zm-.17-54q136.51 0 231.26-94.74Q806-343.49 806-480t-94.74-231.26Q616.51-806 480-806t-231.26 94.74Q154-616.51 154-480t94.74 231.26Q343.49-154 480-154Zm0-326Z"/></svg>
@@ -268,6 +322,55 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Remove the show class from all sub-menus initially
+            document.querySelectorAll('.sub-menu').forEach(menu => {
+                menu.classList.remove('show');
+            });
+
+            // Get all dropdown buttons
+            const dropdownButtons = document.querySelectorAll('.dropdown-button');
+            
+            // Add click event listener to each button
+            dropdownButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Close all other dropdowns
+                    dropdownButtons.forEach(otherButton => {
+                        if (otherButton !== button) {
+                            otherButton.classList.remove('active');
+                            const otherMenu = otherButton.nextElementSibling;
+                            if (otherMenu) {
+                                otherMenu.classList.remove('show');
+                            }
+                        }
+                    });
+
+                    // Toggle current dropdown
+                    this.classList.toggle('active');
+                    const subMenu = this.nextElementSibling;
+                    if (subMenu) {
+                        subMenu.classList.toggle('show');
+                    }
+                });
+            });
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown-button')) {
+                    dropdownButtons.forEach(button => {
+                        button.classList.remove('active');
+                        const subMenu = button.nextElementSibling;
+                        if (subMenu) {
+                            subMenu.classList.remove('show');
+                        }
+                    });
+                }
+            });
+        });
+
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".post-media").forEach(media => {
                 media.onload = function () {
@@ -276,6 +379,12 @@
                     }
                 };
             });
+
+            // Check for login success message in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('login') === 'success') {
+                alert('Login successful! Welcome back.');
+            }
         });
     </script>
         

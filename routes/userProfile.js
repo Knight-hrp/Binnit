@@ -7,7 +7,7 @@ const Post = require('../models/post');
 const Comment = require('../models/comments');
 const Community = require('../models/community');
 const UpVote = require('../models/upVote');
-
+const User = require('../models/user');
 var userProfileName= "https://bootdey.com/img/Content/avatar/avatar6.png";
 
 const storage = multer.diskStorage({
@@ -84,14 +84,16 @@ router.get("/", async (req,res) => {
         });
         
         const likedPosts = (await Promise.all(likedPostsPromises)).filter(post => post !== null);
+        const curr_user = await User.findById(req.user._id);
         
         res.render("userProfile", {
             image: userProfileName,
-            user: req.user,
+            user: curr_user,
             userPosts: userPosts,
             userComments: userComments,
             likedPosts: likedPosts,
-            likedPostsSet: likedPostsSet
+            likedPostsSet: likedPostsSet,
+            curr_user: req.user,
         });
     } catch (error) {
         console.error("Error fetching user profile data:", error);
@@ -109,6 +111,13 @@ router.post("/upload", upload.single("profilePicture"),async(req,res) =>{
     }
     setProfilePicture(req.user._id,req.file.filename);
     return res.redirect("/profile");
+});
+
+router.post("/update-username", async (req, res) => {
+    const username = req.body.username;
+    console.log(username);
+    await User.findByIdAndUpdate(req.user._id, { name: username });
+    res.redirect("/profile");
 });
 
 module.exports = router;

@@ -14,6 +14,7 @@ const COMMUNTIYROLE = require('../models/communityRole');
 const path = require('path');
 const {} = require('../socketHandler')
 const UPVOTE = require('../models/upVote');
+const COMMENTS = require('../models/comments')
 
 
 
@@ -34,7 +35,7 @@ const upload = multer({ storage });
 router.get("/",getCommunity);
 
 router.get("/addCommunity",(req,res)=>{
-    res.render("addCommunity");
+    res.render("addCommunity",{curr_user: req.user});
 });
 
 router.post("/search",searchCommunity);
@@ -61,7 +62,7 @@ router.post("/addCommunity",upload.single("image"),async (req,res)=>{
         communityID: community._id,
         userID: req.user._id
     });
-    return res.redirect("/community");
+    return res.redirect("/community",);
 });
 
 router.get("/explore",exploreCommunity)
@@ -122,6 +123,7 @@ router.get('/:community',async (req,res)=>{
             communityRoles: communityRoles,
             req: req,
             upvotes: upVote,
+            curr_user: req.user,
         });
     } catch (error) {
         console.error("Error:", error);
@@ -354,7 +356,8 @@ router.get('/:community/edit-post/:postId', canModifyPost, async (req, res) => {
             return res.render('editPost', {
                 post: post,
                 community: community,
-                community_name: req.params.community
+                community_name: req.params.community,
+                curr_user: req.user,
             });
         }
     } catch (error) {
@@ -412,6 +415,13 @@ router.get('/:community/delete-post/:postId', canModifyPost, async (req, res) =>
         
         // Delete the post
         await POST.findByIdAndDelete(post._id);
+
+        await COMMENTS.deleteMany({post_id:post._id}).then(result => {
+            console.log(`${result.deletedCount} users deleted`);
+          })
+          .catch(err => {
+            console.error("Error deleting users:", err);
+          });
         
         return res.redirect(`/community/${req.params.community}`);
     } catch (error) {

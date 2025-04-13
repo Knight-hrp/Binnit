@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const USER = require('../models/user');
 const {setUser} = require('../service/auth');
 const UPVOTE = require('../models/upVote');
@@ -17,10 +18,11 @@ async function CreateAccount(req,res) {
     const isEmail = await USER.findOne({email});
     if(!isEmail)
     {
+        const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
         await USER.create({
             name: name,
             email: email,
-            password: password,
+            password: hashedPassword,
         });
         return res.redirect("/user/login");
     }
@@ -44,7 +46,8 @@ async function LoginAccount(req,res)
     }
     else
     {
-        if(password === isEmail.password)
+        const isPasswordValid = await bcrypt.compare(password, isEmail.password);
+        if(isPasswordValid)
         {
             const token = setUser(isEmail);
             res.cookie("uid", token,{
@@ -118,6 +121,12 @@ const getUserDetail = async (req, res) => {
     }
 };
 
+async function getLogOut(req,res)
+{
+    res.clearCookie("uid");
+    return res.redirect("/");
+}
+
 module.exports = {
     DirectSignUpPage,
     DirectLoginPage,
@@ -125,4 +134,5 @@ module.exports = {
     LoginAccount,
     ChangeRole,
     getUserDetail,
+    getLogOut,
 }
