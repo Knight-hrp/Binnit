@@ -8,6 +8,12 @@ const COMMUNTIYROLE = require('../models/communityRole');
 async function createCommunity( name, body, id, filepath) {
     const communityName = body.communityName;
     const aboutCommunity = body.aboutCommunity;
+
+      if (!communityName || !aboutCommunity) {
+        console.error("Missing required fields: communityName or aboutCommunity");
+        return;
+    }
+
     return await COMMUNITY.create({
         communityName: communityName,
         aboutCommunity: aboutCommunity,

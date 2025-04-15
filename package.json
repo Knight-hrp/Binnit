@@ -4,13 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "bcrypt": "^5.1.1",
-    "cookie": "^1.0.2",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    
     "cookie-parse": "^0.4.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
