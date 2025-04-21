@@ -203,10 +203,16 @@
                 <p class="moderator-description">Select a user to assign as a moderator for this community.</p>
                 
                 <!-- Notification Messages -->
-                <% if (typeof success !== 'undefined' && success === 'true') { %>
-                    <div class="notification success">
-                        <p>Moderator assigned successfully! The user has also been added to the community if they weren't already a member.</p>
-                    </div>
+                <% if (typeof success !== 'undefined') { %>
+                    <% if (success === 'true') { %>
+                        <div class="notification success">
+                            <p>Moderator assigned successfully! The user has also been added to the community if they weren't already a member.</p>
+                        </div>
+                    <% } else if (success === 'deassigned') { %>
+                        <div class="notification success">
+                            <p>Moderator has been removed successfully.</p>
+                        </div>
+                    <% } %>
                 <% } %>
                 
                 <% if (typeof error !== 'undefined') { %>
@@ -277,12 +283,19 @@
                             %>
                             
                             <% if (isModeratorOrAdmin) { %>
-                                <div class="role-badge <%= role %>">
-                                    <i class="fas <%= role === 'admin' ? 'fa-user-shield' : 'fa-user-check' %>"></i>
-                                    <%= role === 'admin' ? 'Admin' : 'Moderator' %>
-                                </div>
+                                <% if (role === 'moderator') { %>
+                                    <button onclick="confirmDeassign('<%= user._id %>', '<%= community_name %>')" class="assign-btn">
+                                        <i class="fas fa-user-times"></i>
+                                        Remove Moderator
+                                    </button>
+                                <% } else { %>
+                                    <div class="role-badge <%= role %>">
+                                        <i class="fas fa-user-shield"></i>
+                                        <%= role === 'admin' ? 'Admin' : 'Moderator' %>
+                                    </div>
+                                <% } %>
                             <% } else { %>
-                                <button onclick=" window.location.href='/community/<%= community_name %>/set-moderator/<%= user._id %>'" class="assign-btn">
+                                <button onclick="window.location.href='/community/<%= community_name %>/set-moderator/<%= user._id %>'" class="assign-btn">
                                     <i class="fas fa-user-shield"></i>
                                     Assign as Moderator
                                 </button>
@@ -358,6 +371,129 @@
                 window.location.href = `/community/${community_name}/set-moderator/${userId}`;
             }
         }
+    </script>
+
+    <style>
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #1a1a1a;
+            padding: 24px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            color: #ffffff;
+            margin-bottom: 16px;
+        }
+
+        .modal-message {
+            color: #cccccc;
+            margin-bottom: 24px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .modal-cancel {
+            background-color: #333333;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .modal-cancel:hover {
+            background-color: #444444;
+        }
+
+        .modal-confirm {
+            background-color: #dc3545;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .modal-confirm:hover {
+            background-color: #c82333;
+        }
+    </style>
+
+    <!-- Add this at the end of the body, before closing body tag -->
+    <div id="deassignModal" class="modal-overlay">
+        <div class="modal-container">
+            <h2 class="modal-title">Remove Moderator</h2>
+            <p class="modal-message">Are you sure you want to remove this user as a moderator? This action cannot be undone.</p>
+            <div class="modal-buttons">
+                <button class="modal-cancel" onclick="closeDeassignModal()">Cancel</button>
+                <button id="confirmDeassignBtn" class="modal-confirm">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUserId = '';
+        let currentCommunity = '';
+
+        function confirmDeassign(userId, community) {
+            currentUserId = userId;
+            currentCommunity = community;
+            document.getElementById('deassignModal').style.display = 'block';
+            
+            // Add event listener to confirm button
+            document.getElementById('confirmDeassignBtn').onclick = function() {
+                window.location.href = `/community/${currentCommunity}/deassign-moderator/${currentUserId}`;
+            };
+        }
+
+        function closeDeassignModal() {
+            document.getElementById('deassignModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('deassignModal');
+            if (event.target === modal) {
+                closeDeassignModal();
+            }
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeDeassignModal();
+            }
+        });
     </script>
 
   </body>

@@ -60,9 +60,6 @@ app.use("/comments", restrictToNonLoginUser, commentsRoute)
 app.use("/downVote", restrictToNonLoginUser, downVoteRoute);
 app.use("/feedback", restrictToNonLoginUser, feedbackRoute)
 
-app.use("/demo/chat",(req,res)=>{
-    res.render("chatBar");  
-})
 
 server.listen(8000,()=>{
     console.log(`WEB Application running on : http://localhost:${port} `);

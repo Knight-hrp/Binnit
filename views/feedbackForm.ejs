@@ -60,12 +60,12 @@
             
         </div>
         
-        <div class="right">
+        <!-- <div class="right">
            <div class="search-bar">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M788.38-127.85 535.92-380.31q-30 24.54-73.5 38.04t-83.88 13.5q-106.1 0-179.67-73.53-73.56-73.53-73.56-179.57 0-106.05 73.53-179.71 73.53-73.65 179.57-73.65 106.05 0 179.71 73.56Q631.77-688.1 631.77-582q0 42.69-13.27 83.69t-37.27 70.69l253.46 253.47-46.31 46.3ZM378.54-394.77q79.61 0 133.42-53.81 53.81-53.8 53.81-133.42 0-79.62-53.81-133.42-53.81-53.81-133.42-53.81-79.62 0-133.42 53.81-53.81 53.8-53.81 133.42 0 79.62 53.81 133.42 53.8 53.81 133.42 53.81Z"/></svg>
                 <input type="search" class="search-bar-style" placeholder="Discover here..">
            </div>
-        </div>
+        </div> -->
 
     </div>
 
@@ -176,9 +176,16 @@
     <div class="createPost">
         <h2>Send Feedback to Developers</h2>
 
+        <% if (locals.success) { %>
+            <div class="success-message">
+                <h3>Thank You!</h3>
+                <p>Thank you for your feedback! We appreciate your input.</p>
+            </div>
+        <% } %>
+
         <div class="upload-box">
             <div id="textField" class="content-box">
-                <form method="post" action = "/feedback/submit">
+                <form method="post" action="/feedback/submit">
                 <div class="form-floating">
                     <input type="text" name="title" class="form-control" id="titleBox" placeholder=" " required maxlength="300">
                     <label for="titleBox">Subject <span class="text-danger">*</span></label>
@@ -196,6 +203,31 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .success-message {
+            background-color: #1a1a1a;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid #4a148c;
+            width: 737px
+        }
+
+        .success-message h3 {
+            color: #4a148c;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .success-message p {
+            color: #e3e3e3;
+            font-size: 1rem;
+            line-height: 1.4;
+            margin: 0;
+        }
+    </style>
 
     <script>
         document.getElementById("titleBox").addEventListener("input", function () {
@@ -243,17 +275,24 @@
             // Set the hidden input value
             document.getElementById('editorContent').value = content;
             
-            // Show success message
-            alert('Thank you for your feedback! We appreciate your input.');
-            
             // Submit the form
             this.submit();
         });
 
-        // Check for success message in URL
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('success') === 'true') {
-            alert('Thank you for your feedback! We appreciate your input.');
+        // Show success message and reset form
+        if (window.location.search.includes('success=true')) {
+            // Reset the form
+            document.getElementById('titleBox').value = '';
+            quill.root.innerHTML = '';
+            document.getElementById('charCount').textContent = '0/300';
+
+            // Scroll to top to show the success message
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Remove success parameter from URL without refreshing
+            const url = new URL(window.location);
+            url.searchParams.delete('success');
+            window.history.pushState({}, '', url);
         }
     </script>
   </body>

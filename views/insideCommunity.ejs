@@ -19,13 +19,13 @@
     <!-- Add styling for liked posts -->
     <style>
         .icon-box.liked {
-            color: #0079d3;
+            color: #6A0DAD;
             font-weight: bold;
         }
         
         .icon-box.liked .fa-arrow-up,
         .icon-box.liked .vote-count {
-            color: #0079d3;
+            color: #6A0DAD;
         }
         
         .fa-solid.fa-arrow-up {
@@ -43,6 +43,56 @@
         
         .icon-box:hover .fa-arrow-up {
             transform: scale(1.1);
+        }
+
+        .post-media-container {
+            max-width: 100%;
+            width: 100%;
+            height: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .post-media {
+            width: 100%;
+            max-width: 10000px;  /* Maximum width */
+            height: 500px;     /* Fixed height */
+            object-fit: contain;  /* Maintain aspect ratio */
+            background-color: #000;  /* Dark background for media */
+            border-radius: 8px;
+        }
+
+        /* For video and audio elements */
+        video.post-media,
+        audio.post-media {
+            max-height: 500px;
+            width: 100%;
+            max-width: 10000px;
+            object-fit: contain;
+            background-color: #000;
+            border-radius: 8px;
+        }
+
+        /* For PDF viewer */
+        .pdf-viewer {
+            width: 100%;
+            max-width: 800px;
+            height: 500px;
+            border: none;
+        }
+
+        /* For file downloads */
+        .file-download {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            background: #1a1a1b;
+            border-radius: 8px;
+            margin: 15px auto;
+            text-align: center;
         }
     </style>
 
@@ -335,7 +385,7 @@
                     </div>
                     <h2 class="post-title"><%=post.title%></h2>
                     <% if(!post.path) {%>
-                    <p class="post-text"><%=post.postText%></p>
+                    <div class="post-text" style="white-space: pre-wrap;"><%=post.postText%></div>
                     <% } else {%>
                         <p class="post-text"><%= post.caption %></p>
                         <div class="post-content">
@@ -368,7 +418,7 @@
                                     }
                                 });
                             %>
-                            <button onclick="window.location.href='/upvote/<%=Community%>/<%=post._id%>'" class="icon-box <%= isLiked ? 'liked' : '' %>">
+                            <button onclick="handleUpvote('<%=post._id%>', this)" class="icon-box <%= isLiked ? 'liked' : '' %>">
                                 <% if (isLiked) { %>
                                     <i class="fas fa-arrow-up fa-solid"></i>
                                 <% } else { %>
@@ -376,7 +426,7 @@
                                 <% } %>
                                 <span class="vote-count"><%=post.upVote%></span>
                             </button>
-                            <button class="icon-box downvote" onclick="window.location.href='/downVote/3/<%=post._id%>'">
+                            <button class="icon-box downvote" onclick="handleDownvote('<%=post._id%>', this)">
                                 <i class="fas fa-arrow-down"></i>
                             </button>
                             <button class="icon-box comment-btn" onclick="window.location.href='/comments/1/<%=community._id%>/<%=post._id%>'">
@@ -553,6 +603,83 @@
                     document.body.removeChild(notification);
                 }, 300);
             }, 5000);
+        }
+
+        async function handleUpvote(postId, button) {
+            try {
+                const response = await fetch(`/upvote/<%=Community%>/${postId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update the vote count
+                    const voteCount = button.querySelector('.vote-count');
+                    if (voteCount) {
+                        voteCount.textContent = data.upvotes;
+                    }
+                    
+                    // Toggle the liked class
+                    button.classList.toggle('liked');
+                    
+                    // Toggle the arrow icon
+                    const arrowIcon = button.querySelector('.fa-arrow-up');
+                    if (arrowIcon) {
+                        arrowIcon.classList.toggle('fa-solid');
+                    }
+
+                    // Reset downvote button if it was active
+                    const downvoteButton = button.nextElementSibling;
+                    if (downvoteButton && downvoteButton.classList.contains('downvoted')) {
+                        downvoteButton.classList.remove('downvoted');
+                        const downArrow = downvoteButton.querySelector('.fa-arrow-down');
+                        if (downArrow) {
+                            downArrow.style.color = '';
+                        }
+                    }
+                } else {
+                    console.error('Failed to update vote:', data.error);
+                }
+            } catch (error) {
+                console.error('Error upvoting:', error);
+            }
+        }
+
+        async function handleDownvote(postId, button) {
+            try {
+                const response = await fetch(`/downVote/<%=Community%>/${postId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Toggle the downvoted class
+                    button.classList.toggle('downvoted');
+                    
+                    // Toggle the arrow icon color
+                    const arrowIcon = button.querySelector('.fa-arrow-down');
+                    if (arrowIcon) {
+                        arrowIcon.style.color = button.classList.contains('downvoted') ? '#ff4500' : '';
+                    }
+
+                    // Reset upvote button if it was active and update its count
+                    const upvoteButton = button.previousElementSibling;
+                    if (upvoteButton) {
+                        // Update the upvote count regardless of previous state
+                        const upvoteCount = upvoteButton.querySelector('.vote-count');
+                        if (upvoteCount) {
+                            upvoteCount.textContent = data.upvotes;
+                        }
+
+                        // Reset upvote styling if it was active
+                        if (upvoteButton.classList.contains('liked')) {
+                            upvoteButton.classList.remove('liked');
+                            const upArrow = upvoteButton.querySelector('.fa-arrow-up');
+                            if (upArrow) {
+                                upArrow.classList.remove('fa-solid');
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error downvoting:', error);
+            }
         }
     </script>
   </body>

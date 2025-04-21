@@ -377,7 +377,7 @@
                             let userProfile = userProfiles.find(profile => 
                                 profile.user_id.toString() === feedback.user_id._id.toString()
                             );
-                            let profileImage = userProfile ? userProfile.imageName : '/default-avatar.png';
+                            let profileImage = userProfile ? userProfile.picture_name : '/default-avatar.png';
                             %>
                             <img src="<%= profileImage %>" alt="User Avatar" class="user-avatar">
                             <div class="user-info">

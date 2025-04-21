@@ -2,12 +2,12 @@ const COMMUNITY = require('../models/community');
 const JOINCOMMUNITY = require('../models/joinCommunity')
 const USER = require("../models/user");
 const USERPROFILE = require("../models/userProfilePicture");
-const {ChangeRole} = require('./user')
+const { ChangeRole } = require('./user')
 const COMMUNTIYROLE = require('../models/communityRole');
 
-async function createCommunity( name, body, id, filepath) {
-    const communityName = body.communityName;
-    const aboutCommunity = body.aboutCommunity;
+async function createCommunity( req, id, filepath) {
+    const communityName = req.body.communityName;
+    const aboutCommunity = req.body.aboutCommunity;
     return await COMMUNITY.create({
         communityName: communityName,
         aboutCommunity: aboutCommunity,
@@ -54,7 +54,7 @@ async function renderCreatePost(req,res)
 async function renderCreatePostFile(req,res)
 {
     const community = req.params.community;
-    return res.render("createPostFile",{community: community, curr_user:req.user});
+    return res.render("createPostFile",{community: community, curr_user: req.user});
 }
 
 async function renderAssignModerator(req,res)
@@ -155,6 +155,39 @@ async function searchCommunity(req, res) {
     }
 }
 
+async function deassignModerator(req, res) {
+    try {
+        const { community, userId } = req.params;
+        const communityData = await COMMUNITY.findOne({ communityName: community });
+        
+        if (!communityData) {
+            return res.redirect(`/community/${community}/assign-moderator?error=notfound`);
+        }
+
+        // Check if user is a moderator
+        const moderatorRole = await COMMUNTIYROLE.findOne({
+            community_id: communityData._id,
+            user_id: userId,
+            role: 'moderator'
+        });
+
+        if (!moderatorRole) {
+            return res.redirect(`/community/${community}/assign-moderator?error=notmoderator`);
+        }
+
+        // Remove moderator role
+        await COMMUNTIYROLE.deleteOne({
+            community_id: communityData._id,
+            user_id: userId,
+            role: 'moderator'
+        });
+
+        return res.redirect(`/community/${community}/assign-moderator?success=deassigned`);
+    } catch (error) {
+        console.error('Error deassigning moderator:', error);
+        return res.redirect(`/community/${community}/assign-moderator?error=server`);
+    }
+}
 
 module.exports = {
     createCommunity,
@@ -165,4 +198,5 @@ module.exports = {
     renderCreatePostFile,
     renderAssignModerator,
     searchCommunity,
+    deassignModerator,
 }

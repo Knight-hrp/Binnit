@@ -8,7 +8,8 @@ const {getDisplayFeedback} = require('../controllers/feedback')
 router.get('/', async (req, res) => {
     try {
         res.render('feedbackForm', {
-            curr_user: req.user || null
+            curr_user: req.user || null,
+            success: req.query.success === 'true'
         });
     } catch (error) {
         console.error('Error rendering feedback page:', error);
@@ -27,7 +28,7 @@ router.post('/submit', restrictToNonLoginUser, async (req, res) => {
             description: description,
         });
 
-        res.redirect('/?feedback=success');
+        res.redirect('/feedback?success=true');
     } catch (error) {
         console.error('Error submitting feedback:', error);
         res.status(500).send('Internal Server Error');

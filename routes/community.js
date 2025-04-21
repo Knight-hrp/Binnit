@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 
-const { createCommunity, getCommunity,joinCommunity, exploreCommunity, renderCreatePost, renderCreatePostFile, renderAssignModerator, searchCommunity } = require('../controllers/community');
+const { createCommunity, getCommunity,joinCommunity, exploreCommunity, renderCreatePost, renderCreatePostFile, renderAssignModerator, searchCommunity, deassignModerator } = require('../controllers/community');
 
 const router = express.Router();
 
@@ -43,26 +43,44 @@ router.post("/search",searchCommunity);
 router.get("/join/:community",joinCommunity);
 
 router.post("/addCommunity",upload.single("image"),async (req,res)=>{
-    const path = '/communityImage/' + req.file.filename;
-    await createCommunity(req.file.filename, req.body , req.user._id, path);
-    
-    // Find the newly created community to get its ID
-    const community = await COMMUNITY.findOne({communityName: req.body.communityName});
-    if (!community) {
-        return res.status(500).send("Error creating community");
-    }
+    try {
+        if (!req.user) {
+            return res.status(401).send("You must be logged in to create a community");
+        }
 
-    // Create admin role for the user
-    await COMMUNTIYROLE.create({
-        user_id: req.user._id,
-        community_id: community._id,
-        role: 'admin'
-    });
-    await JOINCOMMUNITY.create({
-        communityID: community._id,
-        userID: req.user._id
-    });
-    return res.redirect("/community",);
+        let imagePath;
+        if (!req.file) {
+            imagePath = 'https://bootdey.com/img/Content/avatar/avatar6.png';
+        } else {
+            imagePath = '/communityImage/' + req.file.filename;
+        }
+
+        await createCommunity(req, req.user._id, imagePath);
+        
+        // Find the newly created community to get its ID
+        const community = await COMMUNITY.findOne({communityName: req.body.communityName});
+        if (!community) {
+            return res.status(500).send("Error creating community");
+        }
+
+        // Create admin role for the user
+        await COMMUNTIYROLE.create({
+            user_id: req.user._id,
+            community_id: community._id,
+            role: 'admin'
+        });
+
+        // Add user to community members
+        await JOINCOMMUNITY.create({
+            communityID: community._id,
+            userID: req.user._id
+        });
+
+        return res.redirect("/community");
+    } catch (error) {
+        console.error("Error creating community:", error);
+        return res.status(500).send("Error creating community: " + error.message);
+    }
 });
 
 router.get("/explore",exploreCommunity)
@@ -73,7 +91,7 @@ router.get('/:community',async (req,res)=>{
         if (!community) {
             return res.status(404).send("Community not found");
         }
-        const communityPost = await POST.find({community_id: community._id});
+        const communityPost = await POST.find({community_id: community._id}).sort({createdAt: -1});
         const users = await USER.find({});
         const userProfiles = await USERPROFILE.find({});
         
@@ -476,5 +494,8 @@ router.get('/leave/:community', async (req, res) => {
         return res.status(500).send("Error leaving community: " + error.message);
     }
 });
-    
+
+// Add this route with your other community routes
+router.get('/:community/deassign-moderator/:userId', isAdmin, deassignModerator);
+
 module.exports = router;

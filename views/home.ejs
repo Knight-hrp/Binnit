@@ -89,6 +89,47 @@
             background: rgba(255, 255, 255, 0.05);
             border-radius: 6px;
         }
+
+        .icon-box.downvoted {
+            color: #ff4444;
+            font-weight: bold;
+        }
+        
+        .icon-box.downvoted .fa-arrow-down {
+            color: #ff4444;
+        }
+
+        /* Media container and media styling */
+        .post-media-container {
+            max-width: 100%;
+            width: 100%;
+            height: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .post-media {
+            width: 100%;
+            max-width: 10000px;
+            height: 500px;
+            object-fit: contain;
+            background-color: #000;
+            border-radius: 8px;
+        }
+
+        /* Video and audio specific styles */
+        video.post-media,
+        audio.post-media {
+            max-height: 500px;
+            width: 100%;
+            max-width: 10000px;
+            object-fit: contain;
+            background-color: #000;
+            border-radius: 8px;
+        }
     </style>
   </head>       
 
@@ -222,6 +263,7 @@
         </nav>
     </div>
     <div id="display-container" class="display-container">
+        
         <% posts.forEach(post => { %>
         <div class="post-container">
             <div class="post-header">
@@ -230,7 +272,7 @@
                         <% if(userProfile._id.toString() === post.community_id.toString()) { %>
                             <img src="<%= userProfile.imageName %>" alt="Profile Picture" class="profile-pic">
                             <div class="user-details">
-                                <span class="username"><%= userProfile.communityName%></span>
+                                <span class="username">b/<%= userProfile.communityName%></span>
                             </div>
                             <br>
                         <% } %>
@@ -261,7 +303,7 @@
             <br>
             <h2><%=post.title%></h2>
             <% if(!post.path) {%>
-            <p class="post-text"><%=post.postText%></p>
+            <div class="post-text" style="white-space: pre-wrap;"><%=post.postText%></div>
             <% } else {%>
                 <p class="post-text"><%= post.caption %></p>
                 <div class="post-content">
@@ -299,7 +341,7 @@
                         }
                     %>
                     
-                    <button onclick="window.location.href='/upvote/<%=post._id%>'" class="icon-box <%= isLiked ? 'liked' : '' %>">
+                    <button onclick="handleUpvote('<%=post._id%>', this)" class="icon-box <%= isLiked ? 'liked' : '' %>">
                         <% if (isLiked) { %>
                             <i class="fas fa-arrow-up fa-solid"></i>
                         <% } else { %>
@@ -308,7 +350,7 @@
                         <span class="vote-count"><%=post.upVote%></span>
                     </button>
                     
-                    <button class="icon-box downVote" onclick="window.location.href='/downVote/2/<%=post._id%>'">
+                    <button class="icon-box downVote" onclick="handleDownvote('<%=post._id%>', this)">
                         <i class="fas fa-arrow-down"></i>
                     </button>
                     <button class="icon-box comment-btn" onclick="window.location.href='/comments/0/<%=post.community_id%>/<%=post._id%>'">
@@ -386,6 +428,68 @@
                 alert('Login successful! Welcome back.');
             }
         });
+
+        async function handleUpvote(postId, button) {
+            try {
+                const response = await fetch(`/upvote/0/${postId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Toggle the liked class
+                    button.classList.toggle('liked');
+                    
+                    // Update the vote count
+                    const voteCount = button.querySelector('.vote-count');
+                    if (voteCount) {
+                        voteCount.textContent = data.upvotes;
+                    }
+                    
+                    // Toggle the arrow icon
+                    const arrowIcon = button.querySelector('.fa-arrow-up');
+                    if (arrowIcon) {
+                        arrowIcon.classList.toggle('fa-solid');
+                    }
+
+                    // Reset downvote button if it was active
+                    const downvoteButton = button.nextElementSibling;
+                    if (downvoteButton && downvoteButton.classList.contains('downvoted')) {
+                        downvoteButton.classList.remove('downvoted');
+                        const downArrow = downvoteButton.querySelector('.fa-arrow-down');
+                        if (downArrow) {
+                            downArrow.style.color = '';
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error upvoting:', error);
+            }
+        }
+
+        async function handleDownvote(postId, button) {
+            try {
+                const response = await fetch(`/downVote/2/${postId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Handle upvote button if it was previously upvoted
+                    const upvoteButton = button.previousElementSibling;
+                    if (data.isUpvoted === false && upvoteButton.classList.contains('liked')) {
+                        upvoteButton.classList.remove('liked');
+                        const upArrow = upvoteButton.querySelector('.fa-arrow-up');
+                        upArrow.classList.remove('fa-solid');
+                        const upvoteCount = upvoteButton.querySelector('.vote-count');
+                        upvoteCount.textContent = data.upvotes;
+                    }
+                    
+                    // Toggle downvote button state
+                    button.classList.toggle('downvoted');
+                    const downArrow = button.querySelector('.fa-arrow-down');
+                    downArrow.style.color = button.classList.contains('downvoted') ? '#ff4444' : '';
+                }
+            } catch (error) {
+                console.error('Error downvoting:', error);
+            }
+        }
     </script>
         
   </body>
