@@ -4,6 +4,7 @@ const app = express();
 const server = http.createServer(app);
 const path = require('path');
 const cookieParser = require('cookie-parser');
+require('dotenv').config();
 
 const setupSocket = require("./socketHandler"); 
 setupSocket(server);
@@ -49,9 +50,9 @@ const {connectToMongoDB} = require("./connect")
 
 app.set("view engine", "ejs");
 app.set('views', path.join(__dirname, './views'));
-const port  = 8000;
+const port = process.env.PORT || 8000;
 
-connectToMongoDB('mongodb://127.0.0.1:27017/communityForum');
+connectToMongoDB(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/communityForum');
 
 app.use("/",staticRoute);
 app.use("/user",userRoute);
@@ -67,6 +68,6 @@ app.get('/about',restrictToNonLoginUser,(req,res)=>{
 });
 
 
-server.listen(8000,()=>{
+server.listen(port,()=>{
     console.log(`WEB Application running on : http://localhost:${port} `);
 });
