@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Binnit - Assign Moderator</title>
+    <title>Binnit - Remove User</title>
     
     <!-- Add Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -205,40 +205,36 @@
     <div id="display-container" class="display-container">
         <div class="moderator-container">
             <div class="moderator-header">
-                <h1>Assign Moderator for <%= community_name %></h1>
+                <h1>Remove User from <%= community_name %></h1>
                 <div class="admin-badge">
-                    <i class="fas fa-lock"></i> Admin-only action
+                    <i class="fas fa-lock"></i> Admin/Moderator-only action
                 </div>
-                <p class="moderator-description">Select a user to assign as a moderator for this community.</p>
+                <p class="moderator-description">Select a user to remove from this community.</p>
                 
                 <!-- Notification Messages -->
                 <% if (typeof success !== 'undefined') { %>
                     <% if (success === 'true') { %>
                         <div class="notification success">
-                            <p>Moderator assigned successfully! The user has also been added to the community if they weren't already a member.</p>
-                        </div>
-                    <% } else if (success === 'deassigned') { %>
-                        <div class="notification success">
-                            <p>Moderator has been removed successfully.</p>
+                            <p>User has been removed from the community successfully.</p>
                         </div>
                     <% } %>
                 <% } %>
                 
                 <% if (typeof error !== 'undefined') { %>
-                    <% if (error === 'existing') { %>
+                    <% if (error === 'admin') { %>
                         <div class="notification warning">
-                            <p>This user is already a moderator for this community.</p>
+                            <p>Cannot remove an admin from the community.</p>
                         </div>
-                    <% } else if (error === 'admin') { %>
-                        <div class="notification info">
-                            <p>This user is an admin and already has moderator privileges.</p>
+                    <% } else if (error === 'self') { %>
+                        <div class="notification warning">
+                            <p>You cannot remove yourself from the community.</p>
                         </div>
                     <% } %>
                 <% } %>
                 
                 <!-- Search Form -->
                 <div class="search-moderator-form">
-                    <form action="/community/<%= community_name %>/assign-moderator" method="GET" class="moderator-search-form">
+                    <form action="/community/<%= community_name %>/remove-user" method="GET" class="moderator-search-form">
                         <div class="search-input-wrapper">
                             <input 
                                 type="text" 
@@ -254,72 +250,107 @@
                         <% if (typeof searchQuery !== 'undefined' && searchQuery !== '') { %>
                         <div class="search-results-info">
                             <p>Showing results for: "<%= searchQuery %>"</p>
-                            <a href="/community/<%= community_name %>/assign-moderator" class="clear-search">Clear search</a>
+                            <a href="/community/<%= community_name %>/remove-user" class="clear-search">Clear search</a>
                         </div>
                         <% } %>
                     </form>
                 </div>
             </div>
             
-            <div class="users-list">
-                <% if (users && users.length > 0) { %>
+            <div class="user-list-container">
+                <div class="user-list-header">
+                    <h2>Community Members</h2>
+                    <div class="search-box">
+                        <form action="/community/<%= community_name %>/remove-user" method="GET" class="search-form">
+                            <input 
+                                type="text" 
+                                name="search" 
+                                placeholder="Search users by name or email..." 
+                                value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
+                                class="search-input"
+                            >
+                            <button type="submit" class="search-button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="user-grid">
+                    <% if (typeof users !== 'undefined' && users.length > 0) { %>
                     <% users.forEach(user => { %>
                         <div class="user-card">
                             <div class="user-info">
-                                <% userProfiles.forEach(userProfile => { %>
-                                    <% if (userProfile.user_id.toString() === user._id.toString()) { %>
-                                        <img src="<%=userProfile.picture_name%>" alt="Profile Picture" class="user-profile-pic">
+                                    <div class="user-avatar">
+                                        <% if (user.profilePicture) { %>
+                                            <img src="<%= user.profilePicture %>" alt="<%= user.name %>'s avatar">
+                                        <% } else { %>
+                                            <img src="/default-profile.png" alt="Default Profile" class="default-avatar">
                                     <% } %>
-                                <% }) %>
+                                    </div>
                                 <div class="user-details">
                                     <h3 class="user-name"><%= user.name %></h3>
                                     <p class="user-email"><%= user.email %></p>
+                                        <div class="user-role-badge <%= user.role.toLowerCase() %>">
+                                            <%= user.role %>
                                 </div>
                             </div>
-                            
+                                    <div class="user-actions">
                             <% 
-                            // Check if user is already a moderator or admin
-                            let isModeratorOrAdmin = false;
-                            let role = '';
-                            if (communityRoles) {
-                                communityRoles.forEach(communityRole => {
-                                    if (communityRole.user_id.toString() === user._id.toString()) {
-                                        isModeratorOrAdmin = true;
-                                        role = communityRole.role;
+                                        // Check if current user can remove this user
+                                        let canRemove = false;
+                                        let isDisabled = false;
+                                        let buttonText = "Remove User";
+                                        
+                                        if (curr_user) {
+                                            if (curr_user.role === 'ADMIN') {
+                                                // Admin can remove everyone except themselves and other admins
+                                                if (user.role === 'ADMIN') {
+                                                    canRemove = false;
+                                                    buttonText = "Cannot Remove Admin";
+                                                    isDisabled = true;
+                                                } else {
+                                                    canRemove = true;
+                                                    buttonText = user.role === 'MODERATOR' ? "Remove Moderator" : "Remove User";
+                                                }
+                                            } else if (curr_user.role === 'MODERATOR') {
+                                                // Moderator can only remove regular members
+                                                if (user.role === 'MEMBER') {
+                                                    canRemove = true;
+                                                } else {
+                                                    canRemove = false;
+                                                    isDisabled = true;
+                                                    buttonText = "No Permission";
                                     }
-                                });
-                            }
-                            %>
-                            
-                            <% if (isModeratorOrAdmin) { %>
-                                <% if (role === 'moderator') { %>
-                                    <button onclick="confirmDeassign('<%= user._id %>', '<%= community_name %>')" class="assign-btn">
-                                        <i class="fas fa-user-times"></i>
-                                        Remove Moderator
+                                            }
+                                            
+                                            // Cannot remove self
+                                            if (user._id.toString() === curr_user._id.toString()) {
+                                                canRemove = false;
+                                                isDisabled = true;
+                                                buttonText = "Cannot Remove Self";
+                                            }
+                                        }
+                                        %>
+                                        
+                                        <button 
+                                            onclick="removeUser('<%= user._id %>', '<%= user.name %>', '<%= user.role.toLowerCase() %>')"
+                                            class="action-button remove-user <%= isDisabled ? 'disabled' : '' %>"
+                                            <%= isDisabled ? 'disabled' : '' %>
+                                        >
+                                            <i class="fas <%= canRemove ? 'fa-user-minus' : 'fa-user-shield' %>"></i>
+                                            <%= buttonText %>
                                     </button>
-                                <% } else { %>
-                                    <div class="role-badge <%= role %>">
-                                        <i class="fas fa-user-shield"></i>
-                                        <%= role === 'admin' ? 'Admin' : 'Moderator' %>
                                     </div>
-                                <% } %>
+                                </div>
+                            </div>
+                        <% }); %>
                             <% } else { %>
-                                <button onclick="window.location.href='/community/<%= community_name %>/set-moderator/<%= user._id %>'" class="assign-btn">
-                                    <i class="fas fa-user-shield"></i>
-                                    Assign as Moderator
-                                </button>
-                            <% } %>
+                        <div class="no-results">
+                            <p>No users found matching your search criteria.</p>
                         </div>
-                    <% }) %>
-                <% } else { %>
-                    <div class="no-users">
-                        <% if (typeof searchQuery !== 'undefined' && searchQuery !== '') { %>
-                            <p>No users found matching "<%= searchQuery %>". Please try a different search term.</p>
-                        <% } else { %>
-                            <p>No users available to assign as moderator.</p>
                         <% } %>
                     </div>
-                <% } %>
             </div>
         </div>
 
@@ -330,7 +361,7 @@
                     <img src="<%=community.imageName%>" alt="Community Profile" class="community-profile-pic">
                     <div class="community-details">
                         <h1 class="community-name"><%= community_name %></h1>
-                        <p class="community-description">Assign a moderator to manage this community</p>
+                        <p class="community-description">Remove a user from this community</p>
                     </div>
                 </div>
                 <div class="community-actions">
@@ -375,10 +406,66 @@
     </script>
 
     <script>
-        function assignModerator(userId, community) {
-            if (confirm('Are you sure you want to assign this user as a moderator?')) {
-                window.location.href = `/community/${community_name}/set-moderator/${userId}`;
+    async function removeUser(userId, userName, role) {
+        try {
+            if (!confirm(`Are you sure you want to remove ${userName} from the community?`)) {
+                return;
             }
+
+            const response = await fetch(`/community/<%= community_name %>/remove-user/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                showNotification(data.message, 'success');
+                // Reload the page after a short delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                showNotification(data.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error removing user:', error);
+            showNotification('An error occurred while removing the user', 'error');
+        }
+    }
+
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        
+        // Style the notification
+        notification.style.position = 'fixed';
+        notification.style.top = '20px';
+        notification.style.right = '20px';
+        notification.style.padding = '15px 25px';
+        notification.style.borderRadius = '4px';
+        notification.style.color = 'white';
+        notification.style.zIndex = '1000';
+        
+        if (type === 'success') {
+            notification.style.backgroundColor = '#28a745';
+        } else if (type === 'error') {
+            notification.style.backgroundColor = '#dc3545';
+            }
+        
+        document.body.appendChild(notification);
+        
+        // Remove notification after 3 seconds
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transition = 'opacity 0.5s ease';    
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 500);
+        }, 3000);
         }
     </script>
 
@@ -456,13 +543,195 @@
         .modal-confirm:hover {
             background-color: #c82333;
         }
+
+        .user-list-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .user-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .user-list-header h2 {
+            color: #e3e3e3;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .search-box {
+            width: 40%;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #2c2c2c;
+            border-radius: 4px;
+            background: #2c2c2c;
+            color: #e3e3e3;
+            font-size: 0.9rem;
+        }
+
+        .search-button {
+            padding: 0.75rem 1rem;
+            background: #0079d3;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .user-card {
+            background: #1a1a1b;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            width: 100%;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #e3e3e3;
+            margin: 0;
+        }
+
+        .user-email {
+            font-size: 0.9rem;
+            color: #808080;
+            margin: 0;
+        }
+
+        .user-role-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .user-role-badge.admin {
+            background: #ffd700;
+            color: #000;
+        }
+
+        .user-role-badge.moderator {
+            background: #0079d3;
+            color: white;
+        }
+
+        .user-role-badge.member {
+            background: #2c2c2c;
+            color: #e3e3e3;
+        }
+
+        .user-actions {
+            margin-left: auto;
+        }
+
+        .action-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #dc3545;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .action-button:not(:disabled):hover {
+            background-color: #c82333;
+            transform: translateY(-1px);
+        }
+
+        .action-button:disabled {
+            background-color: #4a4a4a;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .action-button i {
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .user-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .user-actions {
+                margin: 1rem auto 0;
+            }
+        }
+
+        /* Add these styles for notifications */
+        .notification {
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
     </style>
 
     <!-- Add this at the end of the body, before closing body tag -->
     <div id="deassignModal" class="modal-overlay">
         <div class="modal-container">
-            <h2 class="modal-title">Remove Moderator</h2>
-            <p class="modal-message">Are you sure you want to remove this user as a moderator? This action cannot be undone.</p>
+            <h2 class="modal-title">Remove User</h2>
+            <p class="modal-message">Are you sure you want to remove this user from the community? This action cannot be undone.</p>
             <div class="modal-buttons">
                 <button class="modal-cancel" onclick="closeDeassignModal()">Cancel</button>
                 <button id="confirmDeassignBtn" class="modal-confirm">Remove</button>
@@ -481,7 +750,7 @@
             
             // Add event listener to confirm button
             document.getElementById('confirmDeassignBtn').onclick = function() {
-                window.location.href = `/community/${currentCommunity}/deassign-moderator/${currentUserId}`;
+                window.location.href = `/community/${currentCommunity}/remove-user/${currentUserId}`;
             };
         }
 

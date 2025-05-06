@@ -14,9 +14,6 @@ async function restrictToNonLoginUser(req, res, next) {
     next();
 }
 
-
-
-
 module.exports = {
     restrictToNonLoginUser,
 };

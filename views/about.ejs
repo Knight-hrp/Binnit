@@ -1,16 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Post - <%= community_name %></title>
-    <link rel="stylesheet" href="/exploreCommunities.css">
-    <link rel="stylesheet" href="/createPost.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Us - Binnit</title>
+    <link rel="stylesheet" href="/homepage_Styles.css">
     <link rel="stylesheet" href="/scrollbar.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <!-- Header -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        .about-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #1a1a1b;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .developer-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 30px;
+            padding: 20px;
+            background: #2d2d2e;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .profile-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #7b1fa2;
+        }
+
+        .developer-info {
+            flex: 1;
+        }
+
+        .developer-info h2 {
+            color: #e3e3e3;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .developer-info p {
+            color: #b8b8b8;
+            margin: 8px 0;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .contact-info {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #404040;
+        }
+
+        .contact-info a {
+            color: #7b1fa2;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-info a:hover {
+            color: #9c27b0;
+        }
+
+        .social-links {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            color: #e3e3e3;
+            font-size: 24px;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #7b1fa2;
+        }
+
+        .about-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #2d2d2e;
+            border-radius: 12px;
+        }
+
+        .about-section h3 {
+            color: #e3e3e3;
+            margin-bottom: 15px;
+        }
+
+        .about-section p {
+            color: #b8b8b8;
+            line-height: 1.6;
+        }
+    </style>
+  </head>
+  <body>
     <div class="binnit-header">
 
         <div class="header-left">
@@ -18,12 +110,16 @@
                 <img src="/svg_icons/512px-removebg-preview.png">
             </div>
             
-            <button onclick="window.location.href='/user/signup'">
-                Sign Up
-            </button>
-             <button onclick="window.location.href='/user/Login'">
-                Log In
-            </button>
+            <%if(!locals.curr_user) {%>
+                <button onclick="window.location.href='/user/signup'">
+                    Sign Up
+                </button>
+                 <button onclick="window.location.href='/user/Login'">
+                    Log In
+                </button>
+                <% } else {%>
+                <button onclick="window.location.href='/user/Logout'">Log out</button>
+                <% } %>
         </div>
 
        <div class="middleLogo">
@@ -33,17 +129,9 @@
             
         </div>
 
-       
-   
 
-        <div class="right">
-           <div class="search-bar">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M788.38-127.85 535.92-380.31q-30 24.54-73.5 38.04t-83.88 13.5q-106.1 0-179.67-73.53-73.56-73.53-73.56-179.57 0-106.05 73.53-179.71 73.53-73.65 179.57-73.65 106.05 0 179.71 73.56Q631.77-688.1 631.77-582q0 42.69-13.27 83.69t-37.27 70.69l253.46 253.47-46.31 46.3ZM378.54-394.77q79.61 0 133.42-53.81 53.81-53.8 53.81-133.42 0-79.62-53.81-133.42-53.81-53.81-133.42-53.81-79.62 0-133.42 53.81-53.81 53.8-53.81 133.42 0 79.62 53.81 133.42 53.8 53.81 133.42 53.81Z"/></svg>
-                <input type="search" class="search-bar-style" placeholder="Discover here..">
-           </div>
-        </div>
+
     </div>
-
 
     <div class="binnit-sidebar">
       <div class="space-for-scroll-window"></div>
@@ -51,6 +139,7 @@
         <nav id="sidebar">
             <ul>
             <li id="active">
+
                 <div class="list-style">            
                     <a href="/">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M156-114v-487l324-242.77L804-601v487H566.15v-293.69h-172.3V-114H156Z"/></svg>
@@ -76,30 +165,30 @@
                     <span>Notification</span>
                 </a>
             </li>
-
+            
+            <%if(locals.flag > 0){%>
             <hr>
-
             <li>
                 <button onclick=toggleSubMenu(this) class="dropdown-button">
-                    <span style="color:#929292; font-size: 16px;"><%= community_name %></span>
+                    <span style="color:#929292; font-size: 16px;"><%=community.communityName%></span>
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m480-555.69-184 184L267.69-400 480-612.31 692.31-400 664-371.69l-184-184Z"/></svg>
                 </button>
                 <ul class="sub-menu show">
                     <div>
                         <li>
-                            <a href="/community/post/create/<%= community_name %>">
+                            <a href="/community/post/create/<%=community.communityName%>">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M454-290h54v-162h162v-54H508v-164h-54v164H290v54h164v162Zm26.17 190q-78.81 0-148.21-29.91T211.23-211.1q-51.34-51.28-81.28-120.59Q100-401.01 100-479.83q0-79.07 29.97-148.69t81.35-121.13q51.38-51.5 120.59-80.92Q401.13-860 479.83-860q79.06 0 148.67 29.39 69.62 29.39 121.13 80.85 51.52 51.46 80.94 121.02Q860-559.18 860-480.09t-29.39 148.15q-29.39 69.06-80.84 120.49-51.44 51.44-120.98 81.45-69.55 30-148.62 30Z"/></svg>
                                 <span>Create Post</span>
                             </a>
                         </li>
                         <li>
-                            <a href="/community/post/createfile/<%= community_name %>">
+                            <a href="/community/post/createfile/<%=community.communityName%>">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-480q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
                                 <span>Upload File</span>
                             </a>
                         </li>
                         <li>
-                            <a href="/community/<%= community_name %>">
+                            <a href="/community/<%=community.communityName%>">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm320-240Z"/></svg>
                                 <span>Community Posts</span>
                             </a>
@@ -107,7 +196,7 @@
                     </div>
                 </ul>
             </li>
-
+            <%}%>
             <hr>
 
             <li>
@@ -130,11 +219,6 @@
                                 <span>Join Community</span>
                             </a>
                         </li>
-                            <a href="#">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M358.14-326q-37.14 0-63.64-26.36t-26.5-63.5q0-37.14 26.36-63.64t63.5-26.5q37.14 0 63.64 26.36t26.5 63.5q0 37.14-26.36 63.64t-63.5 26.5ZM226-102q-36.73 0-61.36-24.64Q140-151.27 140-188v-508q0-36.72 24.64-61.36Q189.27-782 226-782h48v-88h58v88h300v-88h54v88h48q36.72 0 61.36 24.64T820-696v508q0 36.73-24.64 61.36Q770.72-102 734-102H226Zm0-54h508q12 0 22-10t10-22v-360H194v360q0 12 10 22t22 10Zm-32-446h572v-94q0-12-10-22t-22-10H226q-12 0-22 10t-10 22v94Zm0 0v-126 126Z"/></svg>
-                                <span>Events</span>
-                            </a>
-                        </li>
 
                         <li>
                             <a href="/community/explore">
@@ -142,8 +226,8 @@
                                 <span>Explore Communities</span>
                             </a>
                         </li>
-                        
-                        <li><a href="#">Documents</a></li>
+
+                        <li>
                     </div>
                 </ul>
             </li>
@@ -157,8 +241,25 @@
                 </button>
                 <ul class="sub-menu show">
                     <div>
+                        <% if(locals.curr_user.role === "NORMAL") { %>
+                            <li>
+                                <a href="/feedback">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#e3e3e3"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm0 15.2L18.8 16H4V4h16v13.2z"/><path d="M14 8H6v2h8V8zm0-3H6v2h8V5zm-8 6h5v2H6v-2z"/></svg>
+                                    <span>Feedback</span>
+                                </a>
+                            </li>
+                            <% } else { %>
+                            <li>
+                                <a href="/feedback/show">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M280-600v-80h560v80H280Zm0 160v-80h560v80H280Zm0 160v-80h560v80H280ZM160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680q17 0 28.5 11.5T200-640q0 17-11.5 28.5T160-600Zm0 160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520q17 0 28.5 11.5T200-480q0 17-11.5 28.5T160-440Zm0 160q-17 0-28.5-11.5T120-320q0-17 11.5-28.5T160-360q17 0 28.5 11.5T200-320q0 17-11.5 28.5T160-280Z"/></svg>
+                                    <span>User Feedbacks</span>
+                                </a>
+                            </li>
+                            <% } %>
+
                         <li>
-                            <a href="#">
+                        <li>
+                            <a href="/about">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M454-290h54v-230h-54v230Zm25.82-296q12.68 0 21.43-8.57 8.75-8.58 8.75-21.25 0-12.68-8.57-21.43-8.58-8.75-21.25-8.75-12.68 0-21.43 8.57-8.75 8.58-8.75 21.25 0 12.68 8.57 21.43 8.58 8.75 21.25 8.75Zm.35 486q-78.81 0-148.21-29.91T211.23-211.1q-51.34-51.28-81.28-120.59Q100-401.01 100-479.83q0-79.07 29.97-148.69t81.35-121.13q51.38-51.5 120.59-80.92Q401.13-860 479.83-860q79.06 0 148.67 29.39 69.62 29.39 121.13 80.85 51.52 51.46 80.94 121.02Q860-559.18 860-480.09t-29.39 148.15q-29.39 69.06-80.84 120.49-51.44 51.44-120.98 81.45-69.55 30-148.62 30Zm-.17-54q136.51 0 231.26-94.74Q806-343.49 806-480t-94.74-231.26Q616.51-806 480-806t-231.26 94.74Q154-616.51 154-480t94.74 231.26Q343.49-154 480-154Zm0-326Z"/></svg>
                                 <span>About Us</span>
                             </a>
@@ -172,184 +273,49 @@
                     </div>
                 </ul>
             </li>
-
             </ul>
         </nav>
-    
     </div>
 
-    <div class="display-container">
-        <div class="create-post-container">
-            <div class="form-header">
-                <h2>Edit File Post</h2>
-                <div class="header-accent"></div>
+    <div id="display-container" class="display-container">
+        <div class="about-container">
+            <div class="developer-card">
+                <img src="https://avatars.githubusercontent.com/u/random" alt="Rishabh Patidar" class="profile-image">
+                <div class="developer-info">
+                    <h2>Rishabh Patidar</h2>
+                    <p>Full Stack Developer & Creator of Binnit</p>
+                    <div class="contact-info">
+                        <p><i class="fas fa-phone"></i> <a href="tel:+918462870356">+91 8462870356</a></p>
+                        <p><i class="fas fa-envelope"></i> <a href="mailto:patidarrishabh20@gmail.com">patidarrishabh20@gmail.com</a></p>
+                    </div>
+                    <div class="social-links">
+                        <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
             </div>
-            
-            <form action="/community/<%= community_name %>/update-file-post/<%= post._id %>" method="POST" enctype="multipart/form-data" class="create-post-form">
-                <div class="form-group">
-                    <label for="title">
-                        <div class="label-accent"></div>
-                        <span>Title</span>
-                    </label>
-                    <input type="text" id="title" name="title" value="<%= post.title %>" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="caption">
-                        <div class="label-accent"></div>
-                        <span>Caption</span>
-                    </label>
-                    <textarea id="caption" name="caption" rows="3"><%= post.caption %></textarea>
-                </div>
-                
-                <div class="form-group file-preview-container">
-                    <label for="file">
-                        <div class="label-accent"></div>
-                        <span>Current File</span>
-                    </label>
-                    
-                    <div class="current-file-preview">
-                        <% if (post.path && (post.path.endsWith('.jpg') || post.path.endsWith('.jpeg') || post.path.endsWith('.png') || post.path.endsWith('.gif'))) { %>
-                            <img src="<%= post.path %>" alt="Current Image" class="preview-media">
-                        <% } else if (post.path && (post.path.endsWith('.mp4') || post.path.endsWith('.webm') || post.path.endsWith('.ogg'))) { %>
-                            <video controls class="preview-media">
-                                <source src="<%= post.path %>" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                        <% } else if (post.path && (post.path.endsWith('.mp3') || post.path.endsWith('.wav') || post.path.endsWith('.ogg'))) { %>
-                            <audio controls class="preview-media">
-                                <source src="<%= post.path %>" type="audio/mpeg">
-                                Your browser does not support the audio tag.
-                            </audio>
-                        <% } else if (post.path && post.path.endsWith('.pdf')) { %>
-                            <embed src="<%= post.path %>" type="application/pdf" class="preview-media" width="100%" height="300px">
-                        <% } else if (post.path) { %>
-                            <a href="<%= post.path %>" class="file-link">
-                                <i class="fas fa-file"></i> <%= post.path.split('/').pop() %>
-                            </a>
-                        <% } %>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="file">
-                        <div class="label-accent"></div>
-                        <span>Replace File (Optional)</span>
-                    </label>
-                    <div class="file-input-container">
-                        <input type="file" id="file" name="file" class="file-input">
-                        <div class="file-input-placeholder">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <span>Choose a file or drag it here</span>
-                        </div>
-                        <div class="file-name"></div>
-                    </div>
-                    <div class="file-preview"></div>
-                </div>
-                
-                <div class="submit-container">
-                    <button type="submit" class="submit-btn">
-                        <span>Update Post</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </form>
+
+            <div class="about-section">
+                <h3>About Binnit</h3>
+                <p>Binnit is a modern community platform designed to bring people together through shared interests and meaningful discussions. Our platform provides a space where users can create and join communities, share content, and engage in conversations that matter.</p>
+                <p>Built with cutting-edge technologies and a focus on user experience, Binnit aims to create an inclusive environment where ideas can flourish and connections can grow.</p>
+            </div>
         </div>
     </div>
-</body>
-<script>
-    function toggleSubMenu(button) {
-        const subMenu = button.nextElementSibling;
-        subMenu.classList.toggle('show');
-        
-        const icon = button.querySelector('svg');
-        if (subMenu.classList.contains('show')) {
-            icon.style.transform = 'rotate(180deg)';
-        } else {
-            icon.style.transform = 'rotate(0deg)';
-        }
-    }
-    
-    // File upload handling
-    document.addEventListener('DOMContentLoaded', function() {
-        const fileInput = document.getElementById('file');
-        const fileInputPlaceholder = document.querySelector('.file-input-placeholder');
-        const fileName = document.querySelector('.file-name');
-        const filePreview = document.querySelector('.file-preview');
-        
-        // Prevent default drag behaviors
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            document.querySelector('.file-input-container').addEventListener(eventName, preventDefaults, false);
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get a random profile image
+            fetch('https://api.github.com/users?since=' + Math.floor(Math.random() * 1000))
+                .then(response => response.json())
+                .then(users => {
+                    if (users.length > 0) {
+                        document.querySelector('.profile-image').src = users[0].avatar_url;
+                    }
+                })
+                .catch(error => console.error('Error fetching profile image:', error));
         });
-        
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        
-        // Highlight drop area when item is dragged over
-        ['dragenter', 'dragover'].forEach(eventName => {
-            document.querySelector('.file-input-container').addEventListener(eventName, highlight, false);
-        });
-        
-        ['dragleave', 'drop'].forEach(eventName => {
-            document.querySelector('.file-input-container').addEventListener(eventName, unhighlight, false);
-        });
-        
-        function highlight() {
-            document.querySelector('.file-input-container').classList.add('active');
-        }
-        
-        function unhighlight() {
-            document.querySelector('.file-input-container').classList.remove('active');
-        }
-        
-        // Handle dropped files
-        document.querySelector('.file-input-container').addEventListener('drop', handleDrop, false);
-        
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            fileInput.files = files;
-            updateFileInfo();
-        }
-        
-        // Handle file input change
-        fileInput.addEventListener('change', updateFileInfo);
-        
-        function updateFileInfo() {
-            const file = fileInput.files[0];
-            if (file) {
-                fileName.textContent = file.name;
-                fileInputPlaceholder.style.display = 'none';
-                fileName.style.display = 'block';
-                
-                // Preview for images
-                if (file.type.match('image.*')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        filePreview.innerHTML = `<img src="${e.target.result}" alt="File Preview" class="preview-image">`;
-                        filePreview.style.display = 'block';
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    // Show file type icon for non-images
-                    let fileIcon = 'fa-file';
-                    if (file.type.includes('video')) fileIcon = 'fa-file-video';
-                    else if (file.type.includes('audio')) fileIcon = 'fa-file-audio';
-                    else if (file.type.includes('pdf')) fileIcon = 'fa-file-pdf';
-                    
-                    filePreview.innerHTML = `<div class="file-icon"><i class="fas ${fileIcon}"></i></div>`;
-                    filePreview.style.display = 'block';
-                }
-            } else {
-                fileName.textContent = '';
-                fileInputPlaceholder.style.display = 'flex';
-                fileName.style.display = 'none';
-                filePreview.style.display = 'none';
-                filePreview.innerHTML = '';
-            }
-        }
-    });
-</script>
-</html> 
+    </script>
+  </body>
+</html>

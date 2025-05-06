@@ -15,8 +15,6 @@ async function DirectLoginPage(req,res){
 
 async function CreateAccount(req,res) {
     const {name, email, password} = req.body;
-    
-    // Check if email is a Google email
     if (!email.endsWith('@gmail.com')) {
         return res.render("signup", {
             error: "Please use a Google email address (@gmail.com)",
@@ -61,7 +59,7 @@ async function LoginAccount(req,res)
             res.cookie("uid", token,{
                 maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
                 httpOnly: true, // Prevents client-side access for security
-                secure: true, // Only send over HTTPS
+                secure: true, 
                 sameSite: "Strict" // Prevent CSRF attacks
             });
             return res.redirect("/");

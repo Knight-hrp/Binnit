@@ -131,7 +131,7 @@
         const roomName = "<%=Community%>";
 
         socket.emit('join-room', roomName);
-
+        
         socket.on('message', (message) => {
             console.log("Received:", message);
             let newMessage = document.createElement("div");

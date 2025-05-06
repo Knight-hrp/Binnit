@@ -4,6 +4,7 @@ const USER = require("../models/user");
 const USERPROFILE = require("../models/userProfilePicture");
 const { ChangeRole } = require('./user')
 const COMMUNTIYROLE = require('../models/communityRole');
+const NOTIFICATION = require('../models/notification');
 
 async function createCommunity( req, id, filepath) {
     const communityName = req.body.communityName;
@@ -27,16 +28,46 @@ async function getCommunity(req,res){
 }
 
 async function joinCommunity(req,res){
-    const community = req.params.community;
-    const user_id = req.user._id;
-    const exit_user_id = await JOINCOMMUNITY.findOne({communityID:community,userID:user_id});
-    if(exit_user_id)
-    {
-        return res.status(400).send("You are already a member of this community");
+    try {
+        const community = req.params.community;
+        const user_id = req.user._id;
+        const exit_user_id = await JOINCOMMUNITY.findOne({communityID:community,userID:user_id});
+        if(exit_user_id)
+        {
+            return res.status(400).send("You are already a member of this community");
+        }
+        const communityID = await COMMUNITY.findOne({communityName:community});
+        await JOINCOMMUNITY.create({communityID:communityID._id,userID:user_id});
+
+        // Get all admins and moderators for this community
+        const communityRoles = await COMMUNTIYROLE.find({
+            community_id: communityID._id,
+            role: { $in: ['admin', 'moderator'] }
+        });
+
+        // Get the joining user's name
+        const joiningUser = await USER.findById(user_id);
+
+        // Create notifications for each admin and moderator
+        const notificationPromises = communityRoles.map(async (role) => {
+            await NOTIFICATION.create({
+                recipient: role.user_id,
+                sender: user_id,
+                type: 'SYSTEM',
+                content: `${joiningUser.name} has joined the community "${community}"`,
+                relatedCommunity: communityID._id,
+                isRead: false
+            });
+        });
+
+        // Wait for all notifications to be created
+        await Promise.all(notificationPromises);
+
+        return res.redirect(`/community`);
+    } catch (error) {
+        console.error("Error joining community:", error);
+        return res.status(500).send("Error joining community: " + error.message);
     }
-    const communityID = await COMMUNITY.findOne({communityName:community});
-    await JOINCOMMUNITY.create({communityID:communityID._id,userID:user_id});
-    return res.redirect(`/community`);
 }
 
 async function exploreCommunity(req,res)
@@ -180,6 +211,16 @@ async function deassignModerator(req, res) {
             community_id: communityData._id,
             user_id: userId,
             role: 'moderator'
+        });
+
+        // Create notification for the user about being deassigned
+        await NOTIFICATION.create({
+            recipient: userId,
+            sender: req.user._id, // The admin who deassigned the role
+            type: 'COMMUNITY_INVITE',
+            content: `You have been deassigned as a moderator from the community "${communityData.communityName}"`,
+            relatedCommunity: communityData._id,
+            isRead: false
         });
 
         return res.redirect(`/community/${community}/assign-moderator?success=deassigned`);

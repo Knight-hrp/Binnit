@@ -3,13 +3,16 @@ const PROFILEPICTURE = require("../models/userProfilePicture")
 const POST = require("../models/post");
 const UPVOTE = require("../models/upVote");
 const COMMUNITY = require("../models/community");
+const COMMENTS = require("../models/comments");
+
 
 async function renderHome(req,res)
 {
     const post = await POST.find().sort({ createdAt: -1 });
     const user = await USER.find({});
     const community = await COMMUNITY.find({});
-    const userProfile = await PROFILEPICTURE.find({}); 
+    const userProfile = await PROFILEPICTURE.find({});
+    const comments = await COMMENTS.find({});
 
     // Get the posts the user has liked, if user is logged in
     let likedPostsSet = new Set();
@@ -28,7 +31,8 @@ async function renderHome(req,res)
         users: user,
         userProfiles: userProfile,
         community: community,
-        likedPostsSet: likedPostsSet
+        likedPostsSet: likedPostsSet,
+        comments: comments
     });
 }
 

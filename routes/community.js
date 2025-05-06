@@ -15,6 +15,7 @@ const path = require('path');
 const {} = require('../socketHandler')
 const UPVOTE = require('../models/upVote');
 const COMMENTS = require('../models/comments')
+const NOTIFICATION = require('../models/notification');
 
 
 
@@ -76,6 +77,22 @@ router.post("/addCommunity",upload.single("image"),async (req,res)=>{
             userID: req.user._id
         });
 
+        // Find all developers to notify them
+        const developers = await USER.find({ role: 'DEVELOPER' });
+
+        // Create notifications for each developer
+        const developer = await USER.findOne({role: 'Developer'});
+
+            await NOTIFICATION.create({
+                recipient: developer._id,
+                sender: req.user._id,
+                type: 'SYSTEM',
+                content: `A new community "${req.body.communityName}" has been created by ${req.user.name}`,
+                relatedCommunity: community._id,
+                isRead: false
+            });
+        
+
         return res.redirect("/community");
     } catch (error) {
         console.error("Error creating community:", error);
@@ -97,6 +114,7 @@ router.get('/:community',async (req,res)=>{
         
         // Check if current user is admin
         let isAdmin = false;
+        let isModerator = false;
         
         // Get community roles (for checking moderators)
         let communityRoles = [];
@@ -112,6 +130,14 @@ router.get('/:community',async (req,res)=>{
                 role: 'admin'
             });
             isAdmin = !!adminRole;
+            
+            // Check for moderator role
+            const moderatorRole = await COMMUNTIYROLE.findOne({
+                user_id: req.user._id,
+                community_id: community._id,
+                role: 'moderator'
+            });
+            isModerator = !!moderatorRole;
             
             // Get all moderator and admin roles for this community
             communityRoles = await COMMUNTIYROLE.find({
@@ -138,6 +164,7 @@ router.get('/:community',async (req,res)=>{
             users: users,
             community: community,
             isAdmin: isAdmin,
+            isModerator: isModerator,
             communityRoles: communityRoles,
             req: req,
             upvotes: upVote,
@@ -156,13 +183,42 @@ router.post("/:community/postText",async (req,res)=>{
             return res.status(404).send("Community not found");
         }
 
-        const post = await POST.create({
+         await POST.create({
             title: req.body.title,
             postText: req.body.postText,
             community_id: communityID._id,
             user_id: req.user._id,
             upVote: 0
         });
+
+        const post = await POST.findOne({title: req.body.title, postText: req.body.postText});
+
+        // Get all admins and moderators for this community
+        const communityRoles = await COMMUNTIYROLE.find({
+            community_id: communityID._id,
+            role: { $in: ['admin', 'moderator'] }
+        });
+
+        // Create notifications for each admin and moderator
+        const notificationPromises = communityRoles.map(async (role) => {
+            // Skip notification if the post creator is the admin/moderator
+            if (role.user_id.toString() === req.user._id.toString()) {
+                return;
+            }
+
+            await NOTIFICATION.create({
+                recipient: role.user_id,
+                sender: req.user._id,
+                type: 'NEW_POST',
+                content: `A new post "${req.body.title}" has been created in the community "${req.params.community}"`,
+                relatedCommunity: communityID._id,
+                relatedPost: post._id,
+                isRead: false
+            });
+        });
+
+        // Wait for all notifications to be created
+        await Promise.all(notificationPromises);
 
         return res.redirect(`/community/${req.params.community}`);
     } catch (error) {
@@ -188,13 +244,42 @@ router.post("/:community/postFile",upload.single("image"),async(req,res)=>{
             return res.status(404).send("Community not found");
         }
 
-        const post = await POST.create({
+        await POST.create({
             title: req.body.caption,
             path: filePath,
             community_id: communityID._id,
             user_id: req.user._id,
             caption: req.body.content,
         });
+
+        const post = await POST.findOne({title: req.body.caption});
+
+        // Get all admins and moderators for this community
+        const communityRoles = await COMMUNTIYROLE.find({
+            community_id: communityID._id,
+            role: { $in: ['admin', 'moderator'] }
+        });
+
+        // Create notifications for each admin and moderator
+        const notificationPromises = communityRoles.map(async (role) => {
+            // Skip notification if the post creator is the admin/moderator
+            if (role.user_id.toString() === req.user._id.toString()) {
+                return;
+            }
+
+            await NOTIFICATION.create({
+                recipient: role.user_id,
+                sender: req.user._id,
+                type: 'NEW_POST',
+                content: `A new file post "${req.body.caption}" has been created in the community "${req.params.community}"`,
+                relatedCommunity: communityID._id,
+                relatedPost: post._id,
+                isRead: false
+            });
+        });
+
+        // Wait for all notifications to be created
+        await Promise.all(notificationPromises);
 
         // Emit the new media event for real-time updates
         global.io.to(room).emit("newMedia", {
@@ -299,6 +384,16 @@ router.get("/:community/set-moderator/:userId", isAdmin, async (req, res) => {
                 userID: userId
             });
         }
+
+        // Create notification for the user
+        await NOTIFICATION.create({
+            recipient: userId,
+            sender: req.user._id, // The admin who assigned the role
+            type: 'COMMUNITY_INVITE',
+            content: `You have been assigned as a moderator in the community "${community.communityName}"`,
+            relatedCommunity: community._id,
+            isRead: false
+        });
         
         // Redirect to the moderator assignment page with success message
         return res.redirect(`/community/${communityName}/assign-moderator?success=true`);
@@ -431,14 +526,35 @@ router.get('/:community/delete-post/:postId', canModifyPost, async (req, res) =>
     try {
         const post = req.post; // From middleware
         
+        // Check if the person deleting is an admin/moderator and not the post owner
+        const isAdminOrMod = await COMMUNTIYROLE.findOne({
+            user_id: req.user._id,
+            community_id: post.community_id,
+            role: { $in: ['admin', 'moderator'] }
+        });
+
+        const isPostOwner = post.user_id.toString() === req.user._id.toString();
+
+        // If admin/mod is deleting someone else's post, send notification
+        if (isAdminOrMod && !isPostOwner) {
+            await NOTIFICATION.create({
+                recipient: post.user_id,
+                sender: req.user._id,
+                type: 'SYSTEM',
+                content: `Your post "${post.title}" in community "${req.params.community}" has been deleted by a moderator due to violation of community rules.`,
+                relatedCommunity: post.community_id,
+                isRead: false
+            });
+        }
+        
         // Delete the post
         await POST.findByIdAndDelete(post._id);
 
         await COMMENTS.deleteMany({post_id:post._id}).then(result => {
-            console.log(`${result.deletedCount} users deleted`);
+            console.log(`${result.deletedCount} comments deleted`);
           })
           .catch(err => {
-            console.error("Error deleting users:", err);
+            console.error("Error deleting comments:", err);
           });
         
         return res.redirect(`/community/${req.params.community}`);
@@ -497,5 +613,155 @@ router.get('/leave/:community', async (req, res) => {
 
 // Add this route with your other community routes
 router.get('/:community/deassign-moderator/:userId', isAdmin, deassignModerator);
+
+// Middleware to check if user is admin or moderator
+const isAdminOrModerator = async (req, res, next) => {
+    try {
+        if (!req.user) {
+            return res.status(401).send("You must be logged in to access this page");
+        }
+        
+        const community = await COMMUNITY.findOne({ communityName: req.params.community });
+        if (!community) {
+            return res.status(404).send("Community not found");
+        }
+        
+        // Check if user is admin or moderator for this community
+        const role = await COMMUNTIYROLE.findOne({
+            user_id: req.user._id,
+            community_id: community._id,
+            role: { $in: ['admin', 'moderator'] }
+        });
+        
+        if (!role) {
+            return res.status(403).send("Only community admins and moderators can remove users");
+        }
+        
+        // Add community to the request object for later use
+        req.communityData = community;
+        next();
+    } catch (error) {
+        console.error("Error checking admin/moderator status:", error);
+        return res.status(500).send("Server error");
+    }
+};
+
+// Route to show the remove user page
+router.get('/:community/remove-user', isAdminOrModerator, async (req, res) => {
+    try {
+        const community = req.communityData;
+        const searchQuery = req.query.search || '';
+        
+        // Get all users who are members of this community
+        const communityMembers = await JOINCOMMUNITY.find({ communityID: community._id });
+        const memberIds = communityMembers.map(member => member.userID);
+        
+        // Get user details with optional search
+        let usersQuery = { _id: { $in: memberIds } };
+        if (searchQuery) {
+            usersQuery.$or = [
+                { name: { $regex: searchQuery, $options: 'i' } },
+                { email: { $regex: searchQuery, $options: 'i' } }
+            ];
+        }
+        
+        const users = await USER.find(usersQuery);
+        
+        // Get user roles and profile pictures
+        const userRoles = await COMMUNTIYROLE.find({ 
+            community_id: community._id,
+            user_id: { $in: memberIds }
+        });
+        
+        const userProfiles = await USERPROFILE.find({ user_id: { $in: memberIds } });
+        
+        // Combine user data with roles and profile pictures
+        const usersWithDetails = users.map(user => {
+            const role = userRoles.find(r => r.user_id.toString() === user._id.toString());
+            const profile = userProfiles.find(p => p.user_id.toString() === user._id.toString());
+            
+            return {
+                ...user.toObject(),
+                role: role ? role.role.toUpperCase() : 'MEMBER',
+                profilePicture: profile ? profile.picture_name : null
+            };
+        });
+        
+        res.render('removeUser', {
+            community_name: req.params.community,
+            users: usersWithDetails,
+            searchQuery: searchQuery,
+            curr_user: req.user,
+            community: community
+        });
+    } catch (error) {
+        console.error("Error loading remove user page:", error);
+        res.status(500).send("Error loading page: " + error.message);
+    }
+});
+
+// Route to handle user removal
+router.post('/:community/remove-user/:userId', isAdminOrModerator, async (req, res) => {
+    try {
+        const community = req.communityData;
+        const userId = req.params.userId;
+        
+        // Check if trying to remove self
+        if (userId === req.user._id.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: 'You cannot remove yourself from the community'
+            });
+        }
+        
+        // Check if user is an admin
+        const userRole = await COMMUNTIYROLE.findOne({
+            user_id: userId,
+            community_id: community._id,
+            role: 'admin'
+        });
+        
+        if (userRole) {
+            return res.status(403).json({
+                success: false,
+                message: 'Cannot remove an admin from the community'
+            });
+        }
+        
+        // Remove user from community members
+        await JOINCOMMUNITY.findOneAndDelete({
+            communityID: community._id,
+            userID: userId
+        });
+        
+        // Remove any moderator role they might have
+        await COMMUNTIYROLE.findOneAndDelete({
+            user_id: userId,
+            community_id: community._id
+        });
+        
+        // Create notification for the removed user
+        await NOTIFICATION.create({
+            recipient: userId,
+            sender: req.user._id,
+            type: 'REMOVE_USER',
+            content: `You have been removed from the community "${community.communityName}"`,
+            relatedCommunity: community._id,
+            isRead: false
+        });
+        
+        return res.status(200).json({
+            success: true,
+            message: 'User has been removed from the community successfully'
+        });
+        
+    } catch (error) {
+        console.error("Error removing user:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error removing user: " + error.message
+        });
+    }
+});
 
 module.exports = router;

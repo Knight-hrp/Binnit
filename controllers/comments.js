@@ -4,6 +4,7 @@ const USER = require('../models/user');
 const Community = require('../models/community');
 const UserProfile = require('../models/userProfilePicture');
 const UpVote = require('../models/upVote');
+const NOTIFICATION = require('../models/notification');
 
 async function getCommentsByPost(curr_user, community, postId, flag, res) {
     try {
@@ -125,6 +126,19 @@ async function createComment(req, res) {
             community_id: community,
             comment_text: commentText.trim(),
         });
+
+        // Create notification for the post owner
+        if (post.user_id.toString() !== req.user._id.toString()) {
+            await NOTIFICATION.create({
+                recipient: post.user_id,
+                sender: req.user._id,
+                type: 'COMMENT',
+                content: `${req.user.name} commented on your post: "${commentText.trim().substring(0, 50)}${commentText.trim().length > 50 ? '...' : ''}"`,
+                relatedPost: postId,
+                relatedComment: comment._id,
+                isRead: false
+            });
+        }
 
         // Redirect back to the comments page with community and post ID
         res.redirect(`/comments/1/${community}/${postId}`);
